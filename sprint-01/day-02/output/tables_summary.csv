@@ -1,0 +1,16 @@
+table_name,total_size,table_size,column_count,description,row_count
+rental,2352 kB,1200 kB,7,,16044
+payment,1816 kB,864 kB,6,,14596
+film,936 kB,704 kB,13,,1000
+film_actor,488 kB,240 kB,3,,5462
+inventory,440 kB,200 kB,4,,4581
+customer,208 kB,72 kB,10,,599
+address,152 kB,64 kB,8,,603
+film_category,112 kB,48 kB,3,,1000
+city,112 kB,40 kB,4,,600
+actor,72 kB,16 kB,4,,200
+store,40 kB,8192 bytes,4,,2
+staff,32 kB,8192 bytes,11,,2
+category,24 kB,8192 bytes,3,,16
+country,24 kB,8192 bytes,3,,109
+language,24 kB,8192 bytes,3,,6

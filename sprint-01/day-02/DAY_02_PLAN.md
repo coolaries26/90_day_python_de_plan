@@ -860,9 +860,7 @@ git commit -m "[DAY-002] Schema explorer, db_utils module, 6 analytical queries 
 git push -u origin sprint-01/day-02-schema-queries
 
 # Log progress
-python scripts/daily_log.py --day 2 --sprint 1 ^
-  --message "Schema introspection, db_utils module, Q1-Q3 complete, Q4-Q6 attempted" ^
-  --status done
+python scripts/daily_log.py --day 2 --sprint 1 --message "Schema introspection, db_utils module, Q1-Q3 complete, Q4-Q6 attempted" --status done
 ```
 
 ---

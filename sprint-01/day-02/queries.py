@@ -66,7 +66,7 @@ def q2_revenue_by_rating() -> list[dict]:
             COUNT(DISTINCT f.film_id)           AS film_count,
             COUNT(r.rental_id)                  AS total_rentals,
             ROUND(SUM(p.amount)::numeric, 2)    AS total_revenue,
-            ROUND(AVG(p.amount)::numeric, 4)    AS avg_payment
+            ROUND(AVG(p.amount)::numeric, 2)    AS avg_payment
         FROM film f
         JOIN inventory i   ON f.film_id   = i.film_id
         JOIN rental r      ON i.inventory_id = r.inventory_id
@@ -147,7 +147,7 @@ def q5_category_popularity() -> list[dict]:
         SELECT c.name AS category_name, 
         COUNT(r.rental_id) AS total_rentals, 
         SUM(p.amount) AS total_revenue, 
-        AVG(p.amount) AS avg_rental_rate, 
+        ROUND(AVG(f.rental_rate)::numeric, 4) AS avg_rental_rate, 
         COUNT(DISTINCT f.film_id) AS film_count
         FROM film_category fc
         JOIN category c ON fc.category_id = c.category_id
@@ -185,7 +185,7 @@ def q6_overdue_rentals() -> list[dict]:
             r.rental_date,
             r.rental_date + (f.rental_duration || ' days')::interval AS due_date, 
             r.return_date, 
-            EXTRACT(EPOCH FROM (r.return_date - (r.rental_date + (f.rental_duration || ' days')::interval)))/86400 AS days_overdue
+            ROUND(EXTRACT(EPOCH FROM (r.return_date - (r.rental_date + (f.rental_duration || ' days')::interval)))/86400, 2) AS days_overdue
         FROM rental r
         JOIN customer c ON c.customer_id=r.customer_id
         JOIN inventory i ON r.inventory_id = i.inventory_id

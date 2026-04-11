@@ -1,0 +1,11 @@
+film_id,title,rating,rental_rate,rental_duration,duration_minutes
+2,Ace Goldfinger,G,4.99,3,48
+7,Airplane Sierra,PG-13,4.99,6,62
+8,Airport Pollock,R,4.99,6,54
+10,Aladdin Calendar,NC-17,4.99,6,63
+13,Ali Forever,PG,4.99,4,150
+20,Amelie Hellfighters,R,4.99,4,79
+21,American Circus,R,4.99,3,129
+28,Anthem Luke,PG-13,4.99,5,91
+31,Apache Divine,NC-17,4.99,5,92
+32,Apocalypse Flamingos,R,4.99,6,119

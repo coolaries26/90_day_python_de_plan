@@ -527,7 +527,7 @@ def main():
     append_progress_log(args.day, sprint, args.message, sha, branch)
 
     log.info("=" * 52)
-    log.info("Day {:03d} complete | SHA={} | pushed={}", args.day, sha, pushed)
+    log.info(f"Day {args.day:03d} complete | SHA={sha} | pushed={pushed}")
     log.info("=" * 52)
 
 

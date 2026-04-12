@@ -373,11 +373,7 @@ def make_commit(repo: Repo, day: int, sprint: int,
     prefix += "[FIX]" if is_fix else ""
     full_msg = f"{prefix} {message}"
 
-    commit = repo.index.commit(
-        full_msg,
-        author_date=datetime.now().astimezone().isoformat(),
-        commit_date=datetime.now().astimezone().isoformat(),
-    )
+    commit = repo.index.commit(full_msg)
     log.info("Committed | {} | {}", commit.hexsha[:8], full_msg)
     return commit.hexsha[:8]
 

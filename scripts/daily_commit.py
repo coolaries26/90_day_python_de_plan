@@ -340,7 +340,7 @@ def validate_branch(repo: Repo, day: int, sprint: int) -> str:
             log.info(f"  git checkout -b sprint-{sprint:02d}/day-{day:02d}-your-topic")
             sys.exit(0)
 
-    log.info("Branch | {}", branch)
+    log.info(f"Branch | {branch}")
     return branch
 
 

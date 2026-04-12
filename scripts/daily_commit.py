@@ -84,7 +84,8 @@ def stage_all(repo: Repo) -> list[str]:
     repo.git.add(A=True)       # equivalent to git add -A (all changes including deletions)
     staged = [item.a_path for item in repo.index.diff("HEAD")]
     untracked_count = len(repo.untracked_files)
-    log.info("Staged | {} changed files, {} untracked", len(staged), untracked_count)
+    #log.info("Staged | {} changed files, {} untracked", len(staged), untracked_count)
+    log.info(f"Staged | {len(staged)} changed files, {untracked_count} untracked")
     return staged
 
 
@@ -109,7 +110,8 @@ def make_commit(repo: Repo, day: int, sprint: int,
 
     commit = repo.index.commit(full_msg)
     
-    log.info("Committed | {} | {}", commit.hexsha[:8], full_msg)
+    #log.info("Committed | {} | {}", commit.hexsha[:8], full_msg)
+    log.info(f"Committed | {commit.hexsha[:8]} | {full_msg}")
     return commit.hexsha[:8]
 
 
@@ -127,10 +129,10 @@ def push_branch(repo: Repo) -> bool:
         if tracking is None:
             # First push — set upstream
             origin.push(refspec=f"{branch}:{branch}", set_upstream=True)
-            log.info("Push | upstream set → origin/{}", branch)
+            log.info(f"Push | upstream set → origin/{branch}")
         else:
             origin.push()
-            log.info("Push | {} → origin/{}", branch, branch)
+            log.info(f"Push | {branch} → origin/{branch}")
         return True
     except GitCommandError as exc:
         log.error("Push failed | {}", str(exc)[:120])
@@ -145,7 +147,7 @@ def merge_to_develop(repo: Repo, source_branch: str) -> bool:
     Returns True on success.
     """
     try:
-        log.info("Merging {} → develop", source_branch)
+        log.info(f"Merging {source_branch} → develop")
 
         repo.git.checkout("develop")
         repo.git.merge(source_branch, "--no-edit")
@@ -157,7 +159,7 @@ def merge_to_develop(repo: Repo, source_branch: str) -> bool:
 
         # Return to original branch
         repo.git.checkout(source_branch)
-        log.info("Returned to {}", source_branch)
+        log.info(f"Returned to {source_branch}")
         return True
 
     except GitCommandError as exc:
@@ -239,7 +241,7 @@ def main():
     sprint = args.sprint or ((args.day - 1) // 7 + 1)
 
     log.info("=" * 52)
-    log.info("Daily Commit | Day {:03d} | Sprint {:02d}", args.day, sprint)
+    log.info(f"Daily Commit | Day {args.day:03d} | Sprint {sprint:02d}"  )
     log.info("=" * 52)
 
     repo        = find_repo()
@@ -260,7 +262,7 @@ def main():
     append_progress_log(args.day, sprint, args.message, sha, branch)
 
     log.info("=" * 52)
-    log.info("Day {:03d} complete | SHA={} | pushed={}", args.day, sha, pushed)
+    log.info(f"Day {args.day:03d} complete | SHA={sha} | pushed={pushed}")
     log.info("=" * 52)
 
 
@@ -335,7 +337,7 @@ def validate_branch(repo: Repo, day: int, sprint: int) -> str:
         answer = input(f"  Continue committing to '{branch}'? (y/N): ").strip().lower()
         if answer != "y":
             log.info("Aborted. Create a feature branch first:")
-            log.info("  git checkout -b sprint-{:02d}/day-{:02d}-your-topic", sprint, day)
+            log.info(f"  git checkout -b sprint-{sprint:02d}/day-{day:02d}-your-topic")
             sys.exit(0)
 
     log.info("Branch | {}", branch)
@@ -350,7 +352,7 @@ def stage_all(repo: Repo) -> list[str]:
     repo.git.add(A=True)       # equivalent to git add -A (all changes including deletions)
     staged = [item.a_path for item in repo.index.diff("HEAD")]
     untracked_count = len(repo.untracked_files)
-    log.info("Staged | {} changed files, {} untracked", len(staged), untracked_count)
+    log.info(f"Staged | {len(staged)} changed files, {untracked_count} untracked")
     return staged
 
 
@@ -374,7 +376,7 @@ def make_commit(repo: Repo, day: int, sprint: int,
     full_msg = f"{prefix} {message}"
 
     commit = repo.index.commit(full_msg)
-    log.info("Committed | {} | {}", commit.hexsha[:8], full_msg)
+    log.info(f"Committed | {commit.hexsha[:8]} | {full_msg}")
     return commit.hexsha[:8]
 
 
@@ -392,10 +394,10 @@ def push_branch(repo: Repo) -> bool:
         if tracking is None:
             # First push — set upstream
             origin.push(refspec=f"{branch}:{branch}", set_upstream=True)
-            log.info("Push | upstream set → origin/{}", branch)
+            log.info(f"Push | upstream set → origin/{branch}")
         else:
             origin.push()
-            log.info("Push | {} → origin/{}", branch, branch)
+            log.info(f"Push | {branch} → origin/{branch}")
         return True
     except GitCommandError as exc:
         log.error("Push failed | {}", str(exc)[:120])
@@ -410,7 +412,7 @@ def merge_to_develop(repo: Repo, source_branch: str) -> bool:
     Returns True on success.
     """
     try:
-        log.info("Merging {} → develop", source_branch)
+        log.info(f"Merging {source_branch} → develop")
 
         repo.git.checkout("develop")
         repo.git.merge(source_branch, "--no-edit")
@@ -422,7 +424,7 @@ def merge_to_develop(repo: Repo, source_branch: str) -> bool:
 
         # Return to original branch
         repo.git.checkout(source_branch)
-        log.info("Returned to {}", source_branch)
+        log.info(f"Returned to {source_branch}")
         return True
 
     except GitCommandError as exc:

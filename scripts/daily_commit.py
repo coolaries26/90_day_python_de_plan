@@ -506,7 +506,7 @@ def main():
     sprint = args.sprint or ((args.day - 1) // 7 + 1)
 
     log.info("=" * 52)
-    log.info("Daily Commit | Day {:03d} | Sprint {:02d}", args.day, sprint)
+    log.info(f"Daily Commit | Day {args.day:03d} | Sprint {sprint:02d}")
     log.info("=" * 52)
 
     repo        = find_repo()

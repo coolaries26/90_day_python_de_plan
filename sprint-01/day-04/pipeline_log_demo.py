@@ -79,10 +79,20 @@ def step_3_simulate_error():
       - logger.exception("message")  ← auto-captures current exception + traceback
       - After catch: logger.warning("Skipping film_archive — table not found, continuing")
     """
-    logger.info("Step 3 | Testing error recovery")
 
     # YOUR CODE HERE
-    raise NotImplementedError("Implement step_3 error handling — see hints above")
+    logger.info("Step 3 | Testing error recovery")
+    try:
+        sqlquery = "SELECT * FROM film_archive"
+        execute_query(sqlquery)
+    except Exception as exc:
+        logger.error("Error querying film_archive | error={}", str(exc))
+        logger.exception("Full exception details:")
+        logger.warning("Skipping film_archive — table not found, continuing")
+        # raise
+
+
+
 
 
 def step_4_log_summary():

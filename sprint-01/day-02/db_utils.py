@@ -20,6 +20,7 @@ import os
 import logging
 from contextlib import contextmanager
 from pathlib import Path
+from time import time
 from typing import Any, Generator
 from urllib.parse import quote_plus
 
@@ -42,7 +43,15 @@ try:
 except ImportError:
     pass
 
-log = logging.getLogger(__name__)
+# As per Day-04 setting up logging instead of using print() 
+# CHANGE 1: At the top, replace:
+#   log = logging.getLogger(__name__)
+# WITH:
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "day-04"))
+from logger import get_logger
+log = get_logger(__name__)
 
 
 # ── DB config ─────────────────────────────────────────────────────────────────
@@ -77,7 +86,12 @@ def _get_pool() -> pg_pool.ThreadedConnectionPool:
             connect_timeout=10,
             **cfg,
         )
-        log.debug("psycopg2 pool created (maxconn=%s)", os.getenv("DB_POOL_SIZE", 5))
+# As per Day-04 setting up logging instead of using print() 
+# CHANGE 2: In _get_pool(), replace the log.debug line with:
+        log.debug("Connection pool created | maxconn=%s host=%s db=%s",
+          os.getenv("DB_POOL_SIZE", 5),
+          os.getenv("DB_HOST"),
+          os.getenv("DB_NAME"))
     return _pool
 
 
@@ -144,6 +158,10 @@ def get_engine() -> Engine:
             echo=False,
         )
         log.debug("SQLAlchemy engine created")
+# As per Day-04 setting up logging instead of using print() 
+# CHANGE 3: In get_engine(), after engine created:
+        log.debug("SQLAlchemy engine created | url=%s:%s/%s",
+          os.getenv("DB_HOST"), os.getenv("DB_PORT"), os.getenv("DB_NAME"))
     return _engine
 
 
@@ -153,6 +171,10 @@ def dispose_engine() -> None:
     if _engine:
         _engine.dispose()
         _engine = None
+# As per Day-04 setting up logging instead of using print() 
+        # CHANGE 4: In dispose_engine():
+        log.info("SQLAlchemy engine disposed — all pool connections closed")
+
 
 
 def close_pool() -> None:
@@ -161,6 +183,9 @@ def close_pool() -> None:
     if _pool and not _pool.closed:
         _pool.closeall()
         _pool = None
+# As per Day-04 setting up logging instead of using print() 
+        # CHANGE 5: In close_pool():
+        log.info("psycopg2 connection pool closed — all connections released")
 
 
 # ── Convenience helpers ───────────────────────────────────────────────────────
@@ -183,11 +208,16 @@ def execute_query(
             params=("PG",), as_dict=True
         )
     """
+# CHANGE 6: In execute_query() — add timing log:
+    import time
+    start = time.perf_counter()
     factory = psycopg2.extras.RealDictCursor if as_dict else None
     with get_connection(cursor_factory=factory) as conn:
         with conn.cursor() as cur:
             cur.execute(sql, params)
             rows = cur.fetchall()
+    elapsed = time.perf_counter() - start
+    log.debug("execute_query | rows=%d elapsed=%.3fs sql=%.80s", len(rows), elapsed, sql.strip())
     return [dict(r) for r in rows] if as_dict else rows
 
 

@@ -33,7 +33,6 @@ Successfully loaded and profiled 4 DVD Rental tables using Pandas. Applied three
 | Issue | Root Cause | Resolution |
 |-------|------------|------------|
 | PostgreSQL can't adapt pandas Period objects | Period objects not serializable by psycopg2 | Converted Period to string before writing to DB |
-| TypeError in duplicated() check | special_features column contains lists (unhashable) | Handled unhashable types by checking hashable columns only |
 | KeyError: 'payment_id' in aggregation | Column doesn't exist in payments DataFrame | Used existing columns like 'amount' for count |
 | SQLAlchemy text() wrapper needed | psycopg2 compatibility issue with raw SQL | Wrapped SQL queries in text() for proper parameter handling |
 | Permission denied for CREATE TABLE | appuser lacked CREATE on schema public | Granted CREATE permission on schema public to appuser |
@@ -67,8 +66,11 @@ Successfully loaded and profiled 4 DVD Rental tables using Pandas. Applied three
 _Paste git log --oneline -5 here:_
 
 ```
-d4df5f8 [DAY-003] Pandas intro: load+profile 4 tables, 3 transforms, analytics tables written to DB
-```
+1eabfb0 (HEAD -> sprint-01/day-04-logging, origin/sprint-01/day-03-pandas-intro, origin/develop, sprint-01/day-03-pandas-intro, develop) [DAY-003][FIX] T2 LEFT JOIN film_category to retain all 1000 films; DQ findings updated
+6a4f217 [DAY-003][FIX] T2 LEFT JOIN film_category to retain all 1000 films; DQ findings updated
+a86d890 [DAY-003][S01] Pandas: loaded 4 tables, profiled with info()/describe(), T1+T2+T3 transforms, wrote analytics tables to PostgreSQL
+2cea4cc [DAY-003] Pandas intro: load+profile 4 tables, 3 transforms, analytics tables written to DB
+824aac6 (origin/sprint-01/day-02-schema-queries, sprint-01/day-02-schema-queries) [DAY-002][FIX] ROUND avg_rental_rate(4dp) and days_overdue(2dp)```
 
 ---
 *Retrospective: Day 03 | Sprint 01*

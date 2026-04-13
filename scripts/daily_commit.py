@@ -221,8 +221,33 @@ def merge_to_main(repo: Repo) -> bool:
     Self-check: after running, git log --oneline -3 on main should show
     a merge commit, and git tag should list 'sprint-01-complete'.
     """
-    # YOUR CODE HERE
-    raise NotImplementedError("Implement merge_to_main — see hints above")
+    try:
+        log.info(f"Merging develop → main")
+
+        repo.git.checkout("main")
+        repo.git.pull("origin", "main")
+        repo.git.merge("develop", "--no-edit")
+        repo.git.tag("sprint-01-complete")
+        repo.git.push(tags=True)
+
+        origin = repo.remote("origin")
+        origin.push("develop")
+
+        log.info("Merged and pushed main ✅")
+
+        # Return to original branch
+        repo.git.checkout("develop")
+        log.info(f"Returned to develop")
+        return True
+
+    except GitCommandError as exc:
+        log.error("Merge failed | {}", str(exc)[:200])
+        log.warning("Resolve conflicts manually, then re-run without --merge")
+        try:
+            repo.git.checkout(source_branch)
+        except Exception:
+            pass
+        return False
 
 
 def main():

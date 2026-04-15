@@ -34,3 +34,4 @@
 | 005 | S01 | 2026-04-15 01:37 | `6f5e2c92` | `sprint-01/day-05-git-workflow` | TEST: Day 05 retrospective |
 | 005 | S01 | 2026-04-15 01:38 | `89e3f167` | `sprint-01/day-05-git-workflow` | TEST: Day 05 retrospective |
 | 005 | S01 | 2026-04-15 22:58 | `84b8bd33` | `develop` | TEST: Day 05 retrospective |
+| 006 | S01 | 2026-04-15 23:56 | `b4812df7` | `sprint-01/day-06-jira-automation` | JIRA automation + Pydantic config complete |

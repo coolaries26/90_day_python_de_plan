@@ -19,11 +19,17 @@ Usage:
 
 import argparse
 import sys
+from pathlib import Path
+# ── PATH FIX FOR JIRA CLIENT (Day 06) ─────────────────────────────
+_here = Path(__file__).resolve().parent
+sys.path.insert(0, str(_here.parent / "sprint-01" / "day-06"))
+print("DEBUG: Added path for jira_client →", _here.parent / "sprint-01" / "day-06") 
 import os
 from datetime import datetime
 from pathlib import Path
 
 from git import Repo, GitCommandError, InvalidGitRepositoryError
+from jira_client import jira_client
 
 # ── Bootstrap paths ───────────────────────────────────────────────────────────
 _scripts_dir = Path(__file__).resolve().parent
@@ -284,7 +290,17 @@ def main():
         except NotImplementedError as exc:
             log.warning("merge_to_main not implemented yet: {}", exc)
 
-    append_progress_log(args.day, sprint, args.message, sha, branch)
+            # === JIRA AUTOMATION (Day 06) ===
+        try:
+            issue_key = jira_client.create_or_update_daily_task(
+                day=args.day,
+                sprint=sprint,
+                message=args.message,
+                sha=sha
+            )
+            log.info("JIRA automation complete | task={}", issue_key)
+        except Exception as exc:
+            log.error("JIRA post failed (non-blocking) | {}", exc)
 
     log.info("=" * 52)
     log.info(f"Day {args.day:03d} complete | SHA={sha} | pushed={pushed}")

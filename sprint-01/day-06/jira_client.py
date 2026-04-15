@@ -1,11 +1,25 @@
 #!/usr/bin/env python3
-import json
+import sys
 from pathlib import Path
-from jira import JIRA
-from config.settings import settings
-from logger import get_pipeline_logger
 
+# ── ROBUST PATH FIX ───────────────────────────────
+_here = Path(__file__).resolve().parent
+print("DEBUG: Script running from →", _here)
+
+# Add day-06 (config) and day-04 (logger)
+sys.path.insert(0, str(_here))
+sys.path.insert(0, str(_here.parent / "day-04"))
+
+print("DEBUG: sys.path[0..1] →", sys.path[:2])
+
+# === ALL IMPORTS ===
+from jira import JIRA
+from logger import get_pipeline_logger
+from config.settings import settings
+
+# Create logger BEFORE the class uses it
 logger = get_pipeline_logger("jira_client")
+
 
 class JiraClient:
     def __init__(self):
@@ -21,7 +35,10 @@ h3. Day {day:03d} — Sprint {sprint:02d}
 *Branch:* sprint-01/day-06-jira-automation
         """
 
-        issues = self.jira.search_issues(f'project={settings.JIRA_PROJECT_KEY} AND summary ~ "DAY-{day:03d}" AND status != Done')
+        issues = self.jira.search_issues(
+            f'project={settings.JIRA_PROJECT_KEY} AND summary ~ "DAY-{day:03d}" AND status != Done'
+        )
+
         if issues:
             issue = issues[0]
             self.jira.add_comment(issue.key, f"Updated progress\n{message}")
@@ -39,10 +56,14 @@ h3. Day {day:03d} — Sprint {sprint:02d}
         self.jira.add_worklog(issue.key, timeSpent="2h")
         logger.info("Logged 2h work on task {}", issue.key)
 
+        # Save proof
         Path("sprint-01/day-06/output").mkdir(exist_ok=True)
+        import json
         with open("sprint-01/day-06/output/jira_demo.json", "w") as f:
             json.dump({"issue_key": issue.key, "summary": issue.fields.summary}, f, indent=2)
 
         return issue.key
 
+
+# Create singleton
 jira_client = JiraClient()

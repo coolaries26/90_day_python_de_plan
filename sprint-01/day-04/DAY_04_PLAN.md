@@ -614,6 +614,7 @@ cd C:\Users\Lenovo\python-de-journey
 git add sprint-01/day-04/
 git add sprint-01/day-02/db_utils.py    # updated with logging
 git add logs/.gitkeep                   # keep logs/ tracked but not log files
+git restore --staged logs/*log                     # remove old log files
 
 # Verify .gitignore excludes actual log files
 # Add to .gitignore if not present:

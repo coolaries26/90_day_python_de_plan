@@ -25,18 +25,22 @@ class JiraClient:
 
 
     def create_or_update_daily_task(self, day: int, sprint: int, message: str, sha: str) -> str:
-        """Always create a new task (simplest and most reliable)"""
+        """Temporary hardcoded project key + debug print"""
+        
+        # === TEMPORARY HARDCODE (for debugging) ===
+        project_key = "COOLA8"          # ← Change only this line if needed
+        print(f"DEBUG: Using JIRA project key = '{project_key}'")   # ← This will show us the truth
+        
         summary = f"[DAY-{day:03d}][S{sprint:02d}] Daily Progress — Python DE Journey"
         description = f"""
 h3. Day {day:03d} — Sprint {sprint:02d}
 *Message:* {message}
 *Commit:* {sha}
 *Branch:* sprint-01/day-07-sprint-review
-*Date:* {datetime.now().strftime('%Y-%m-%d %H:%M')}
         """
 
         issue = self.jira.create_issue(
-            project=settings.JIRA_PROJECT_KEY,
+            project=project_key,                    # ← using hardcoded key
             summary=summary,
             description=description,
             issuetype={"name": "Task"},
@@ -53,6 +57,7 @@ h3. Day {day:03d} — Sprint {sprint:02d}
             json.dump({"issue_key": issue.key, "summary": issue.fields.summary}, f, indent=2)
 
         return issue.key
+    
 
 # Create singleton
 jira_client = JiraClient()

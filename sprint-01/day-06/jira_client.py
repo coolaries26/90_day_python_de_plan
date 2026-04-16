@@ -35,9 +35,12 @@ h3. Day {day:03d} — Sprint {sprint:02d}
 *Branch:* sprint-01/day-06-jira-automation
         """
 
+        # Fixed: Use newer API to avoid deprecation error
         issues = self.jira.search_issues(
-            f'project={settings.JIRA_PROJECT_KEY} AND summary ~ "DAY-{day:03d}" AND status != Done'
-        )
+            f'project={settings.JIRA_PROJECT_KEY} AND summary ~ "DAY-{day:03d}"',
+            maxResults=50,
+            validateQuery=False
+        )        
 
         if issues:
             issue = issues[0]

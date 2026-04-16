@@ -32,15 +32,14 @@ class JiraClient:
 h3. Day {day:03d} — Sprint {sprint:02d}
 *Message:* {message}
 *Commit:* {sha}
-*Branch:* sprint-01/day-06-jira-automation
+*Branch:* sprint-01/day-07-sprint-review
         """
 
-        # Fixed: Use newer API to avoid deprecation error
+        # Simplified JQL search (works with older python-jira versions)
         issues = self.jira.search_issues(
             f'project={settings.JIRA_PROJECT_KEY} AND summary ~ "DAY-{day:03d}"',
-            maxResults=50,
-            validateQuery=False
-        )        
+            maxResults=50
+        )
 
         if issues:
             issue = issues[0]
@@ -52,21 +51,20 @@ h3. Day {day:03d} — Sprint {sprint:02d}
                 summary=summary,
                 description=description,
                 issuetype={"name": "Task"},
-                labels=["automation", "day-06"]
+                labels=["automation", "day-07"]
             )
             logger.info("Created new JIRA task | {}", issue.key)
 
         self.jira.add_worklog(issue.key, timeSpent="2h")
         logger.info("Logged 2h work on task {}", issue.key)
 
-        # Save proof
+        # Save proof file
         Path("sprint-01/day-06/output").mkdir(exist_ok=True)
         import json
         with open("sprint-01/day-06/output/jira_demo.json", "w") as f:
             json.dump({"issue_key": issue.key, "summary": issue.fields.summary}, f, indent=2)
 
         return issue.key
-
 
 # Create singleton
 jira_client = JiraClient()

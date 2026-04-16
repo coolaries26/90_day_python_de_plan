@@ -1,25 +1,22 @@
 #!/usr/bin/env python3
 import sys
 from pathlib import Path
+from datetime import datetime   # ← Added this line
 
 # ── ROBUST PATH FIX ───────────────────────────────
 _here = Path(__file__).resolve().parent
 print("DEBUG: Script running from →", _here)
 
-# Add day-06 (config) and day-04 (logger)
 sys.path.insert(0, str(_here))
 sys.path.insert(0, str(_here.parent / "day-04"))
 
 print("DEBUG: sys.path[0..1] →", sys.path[:2])
 
-# === ALL IMPORTS ===
 from jira import JIRA
 from logger import get_pipeline_logger
 from config.settings import settings
 
-# Create logger BEFORE the class uses it
 logger = get_pipeline_logger("jira_client")
-
 
 class JiraClient:
     def __init__(self):
@@ -28,7 +25,7 @@ class JiraClient:
 
 
     def create_or_update_daily_task(self, day: int, sprint: int, message: str, sha: str) -> str:
-        """Always create a new task (simplest & most reliable after API deprecation)"""
+        """Always create a new task (simplest and most reliable)"""
         summary = f"[DAY-{day:03d}][S{sprint:02d}] Daily Progress — Python DE Journey"
         description = f"""
 h3. Day {day:03d} — Sprint {sprint:02d}
@@ -49,7 +46,7 @@ h3. Day {day:03d} — Sprint {sprint:02d}
         self.jira.add_worklog(issue.key, timeSpent="2h")
         logger.info("✅ Created new JIRA task | {}", issue.key)
 
-        # Save proof file
+        # Save proof
         Path("sprint-01/day-06/output").mkdir(exist_ok=True)
         import json
         with open("sprint-01/day-06/output/jira_demo.json", "w") as f:

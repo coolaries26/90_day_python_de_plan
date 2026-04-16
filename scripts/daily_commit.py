@@ -145,40 +145,39 @@ def push_branch(repo: Repo) -> bool:
         return False
 
 
-# ── updated merge to main ──────────────────────────────────────────────────────────────
-def merge_to_main(repo: Repo) -> bool:
+# ____________updated merge to main____________________________________
+def merge_to_develop(repo: Repo, source_branch: str) -> bool:
     """
-    Merge develop into main and push main + create sprint tag.
+    Merge source_branch into develop and push develop.
+    This makes the day's work visible on GitHub's default view.
+
+    Returns True on success.
     """
     try:
-        log.info("Merging develop → main")
+        log.info(f"Merging {source_branch} → develop")
 
-        repo.git.checkout("main")
-        repo.git.pull("origin", "main")          # get latest
-        repo.git.merge("develop", "--no-edit")
+        repo.git.checkout("develop")
+        repo.git.merge(source_branch, "--no-edit")
 
         origin = repo.remote("origin")
         origin.push()
 
-        # Create sprint tag
-        tag_name = "sprint-01-complete"
-        repo.git.tag(tag_name)
-        origin.push(tags=True)
+        log.info("Merged and pushed develop ✅")
 
-        log.info("Merged and pushed main + tag %s ✅", tag_name)
-
-        # Return to develop
-        repo.git.checkout("develop")
-        log.info("Returned to develop")
+        # Return to original branch
+        repo.git.checkout(source_branch)
+        log.info(f"Returned to {source_branch}")
         return True
 
     except GitCommandError as exc:
-        log.error("Merge to main failed | %s", exc)
+        log.error("Merge failed | {}", str(exc)[:200])
+        log.warning("Resolve conflicts manually, then re-run without --merge")
         try:
-            repo.git.checkout("develop")
+            repo.git.checkout(source_branch)
         except Exception:
             pass
         return False
+
 
 def append_progress_log(day: int, sprint: int,
                         message: str, sha: str, branch: str) -> None:
@@ -230,33 +229,38 @@ def merge_to_main(repo: Repo) -> bool:
     a merge commit, and git tag should list 'sprint-01-complete'.
     """
     try:
-        log.info(f"Merging develop → main")
+        log.info("Merging develop → main")
 
+        # Checkout main and pull latest
         repo.git.checkout("main")
         repo.git.pull("origin", "main")
+
+        # Merge develop into main
         repo.git.merge("develop", "--no-edit")
-        repo.git.tag("sprint-01-complete")
-        repo.git.push(tags=True)
 
+        # Push main
         origin = repo.remote("origin")
-        origin.push("develop")
+        origin.push()
 
-        log.info("Merged and pushed main ✅")
+        # Create sprint tag
+        tag_name = "sprint-01-complete"
+        repo.git.tag("-f", tag_name)          # -f forces overwrite if tag exists
+        origin.push(tags=True)
 
-        # Return to original branch
+        log.info("✅ Merged and pushed main + tag '%s'", tag_name)
+
+        # Return to develop
         repo.git.checkout("develop")
-        log.info(f"Returned to develop")
+        log.info("Returned to develop")
         return True
 
     except GitCommandError as exc:
-        log.error("Merge failed | {}", str(exc)[:200])
-        log.warning("Resolve conflicts manually, then re-run without --merge")
+        log.error("Merge to main failed | %s", str(exc)[:200])
         try:
-            repo.git.checkout(source_branch)
+            repo.git.checkout("develop")
         except Exception:
             pass
         return False
-
 
 def main():
     parser = argparse.ArgumentParser(

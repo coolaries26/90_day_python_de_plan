@@ -26,37 +26,28 @@ class JiraClient:
         self.jira = JIRA(server=settings.JIRA_URL, basic_auth=settings.jira_auth)
         logger.info("✅ Connected to JIRA | project={}", settings.JIRA_PROJECT_KEY)
 
+
     def create_or_update_daily_task(self, day: int, sprint: int, message: str, sha: str) -> str:
+        """Always create a new task (simplest & most reliable after API deprecation)"""
         summary = f"[DAY-{day:03d}][S{sprint:02d}] Daily Progress — Python DE Journey"
         description = f"""
 h3. Day {day:03d} — Sprint {sprint:02d}
 *Message:* {message}
 *Commit:* {sha}
 *Branch:* sprint-01/day-07-sprint-review
+*Date:* {datetime.now().strftime('%Y-%m-%d %H:%M')}
         """
 
-        # Simplified JQL search (works with older python-jira versions)
-        issues = self.jira.search_issues(
-            f'project={settings.JIRA_PROJECT_KEY} AND summary ~ "DAY-{day:03d}"',
-            maxResults=50
+        issue = self.jira.create_issue(
+            project=settings.JIRA_PROJECT_KEY,
+            summary=summary,
+            description=description,
+            issuetype={"name": "Task"},
+            labels=["automation", f"day-{day:03d}"]
         )
 
-        if issues:
-            issue = issues[0]
-            self.jira.add_comment(issue.key, f"Updated progress\n{message}")
-            logger.info("Updated JIRA task | {}", issue.key)
-        else:
-            issue = self.jira.create_issue(
-                project=settings.JIRA_PROJECT_KEY,
-                summary=summary,
-                description=description,
-                issuetype={"name": "Task"},
-                labels=["automation", "day-07"]
-            )
-            logger.info("Created new JIRA task | {}", issue.key)
-
         self.jira.add_worklog(issue.key, timeSpent="2h")
-        logger.info("Logged 2h work on task {}", issue.key)
+        logger.info("✅ Created new JIRA task | {}", issue.key)
 
         # Save proof file
         Path("sprint-01/day-06/output").mkdir(exist_ok=True)

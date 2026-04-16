@@ -145,38 +145,40 @@ def push_branch(repo: Repo) -> bool:
         return False
 
 
-def merge_to_develop(repo: Repo, source_branch: str) -> bool:
+# ── updated merge to main ──────────────────────────────────────────────────────────────
+def merge_to_main(repo: Repo) -> bool:
     """
-    Merge source_branch into develop and push develop.
-    This makes the day's work visible on GitHub's default view.
-
-    Returns True on success.
+    Merge develop into main and push main + create sprint tag.
     """
     try:
-        log.info(f"Merging {source_branch} → develop")
+        log.info("Merging develop → main")
 
-        repo.git.checkout("develop")
-        repo.git.merge(source_branch, "--no-edit")
+        repo.git.checkout("main")
+        repo.git.pull("origin", "main")          # get latest
+        repo.git.merge("develop", "--no-edit")
 
         origin = repo.remote("origin")
         origin.push()
 
-        log.info("Merged and pushed develop ✅")
+        # Create sprint tag
+        tag_name = "sprint-01-complete"
+        repo.git.tag(tag_name)
+        origin.push(tags=True)
 
-        # Return to original branch
-        repo.git.checkout(source_branch)
-        log.info(f"Returned to {source_branch}")
+        log.info("Merged and pushed main + tag %s ✅", tag_name)
+
+        # Return to develop
+        repo.git.checkout("develop")
+        log.info("Returned to develop")
         return True
 
     except GitCommandError as exc:
-        log.error("Merge failed | {}", str(exc)[:200])
-        log.warning("Resolve conflicts manually, then re-run without --merge")
+        log.error("Merge to main failed | %s", exc)
         try:
-            repo.git.checkout(source_branch)
+            repo.git.checkout("develop")
         except Exception:
             pass
         return False
-
 
 def append_progress_log(day: int, sprint: int,
                         message: str, sha: str, branch: str) -> None:

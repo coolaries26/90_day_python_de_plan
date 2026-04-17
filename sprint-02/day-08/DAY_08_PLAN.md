@@ -12,10 +12,6 @@ This is exactly the standard dataset we use for the entire program.
 
 ---
 
-**Here is your adjusted `DAY_08_PLAN.md`** (Sprint 02 — Day 08)
-
-**Save it now** as:  
-`sprint-02/day-08/DAY_08_PLAN.md`
 
 ```markdown
 # 📅 DAY 08 — Sprint 02 | Full DVD Rental Dataset + First ETL Pipeline
@@ -170,19 +166,11 @@ python sprint-02/day-08/etl_pipeline.py
 
 | # | Task                                              | Done? |
 |---|---------------------------------------------------|-------|
-| 1 | Branch created                                    | [ ]   |
-| 2 | Dataset validation passed                         | [ ]   |
-| 3 | `etl_pipeline.py` runs successfully               | [ ]   |
-| 4 | `analytics_customer_lifetime` table created       | [ ]   |
-| 5 | CSV exported                                      | [ ]   |
-| 6 | One clean commit + merge                          | [ ]   |
+| 1 | Branch created                                    | [ ✅ ]   |
+| 2 | Dataset validation passed                         | [ ✅ ]   |
+| 3 | `etl_pipeline.py` runs successfully               | [ ✅ ]   |
+| 4 | `analytics_customer_lifetime` table created       | [ ✅ ]   |
+| 5 | CSV exported                                      | [ ✅ ]   |
+| 6 | One clean commit + merge                          | [ ✅ ]   |
 
 ---
-
-**Run the plan above and reply with “Day 08 done”** when finished (or paste any output if you hit issues).
-
-Once you complete Day 08, I’ll give you **Day 09** (more advanced ETL with SQLAlchemy + data quality checks).
-
-You are now officially in the real Data Engineering part of the journey! 🚀
-
-Ready when you are.

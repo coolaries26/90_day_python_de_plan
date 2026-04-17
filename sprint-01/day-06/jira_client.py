@@ -28,7 +28,7 @@ class JiraClient:
         """Temporary hardcoded project key + debug print"""
         
         # === TEMPORARY HARDCODE (for debugging) ===
-        project_key = "COOLA8"          # ← Change only this line if needed
+        project_key = "PDP"          # ← Change only this line if needed
         print(f"DEBUG: Using JIRA project key = '{project_key}'")   # ← This will show us the truth
         
         summary = f"[DAY-{day:03d}][S{sprint:02d}] Daily Progress — Python DE Journey"

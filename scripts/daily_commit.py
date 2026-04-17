@@ -297,16 +297,16 @@ def main():
             log.warning("merge_to_main not implemented yet: {}", exc)
 
             # === JIRA AUTOMATION (Day 06) ===
-#        try:
-#            issue_key = jira_client.create_or_update_daily_task(
-#                day=args.day,
-#                sprint=sprint,
-#                message=args.message,
-#                sha=sha
-#            )
-#            log.info("JIRA automation complete | task={}", issue_key)
-#        except Exception as exc:
-#            log.error("JIRA post failed (non-blocking) | {}", exc)
+        try:
+            issue_key = jira_client.create_or_update_daily_task(
+                day=args.day,
+                sprint=sprint,
+                message=args.message,
+                sha=sha
+            )
+            log.info("JIRA automation complete | task={}", issue_key)
+        except Exception as exc:
+            log.error("JIRA post failed (non-blocking) | {}", exc)
 
     log.info("=" * 52)
     log.info(f"Day {args.day:03d} complete | SHA={sha} | pushed={pushed}")

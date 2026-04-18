@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 **Here is your complete `DAY_09_PLAN.md`**
 
@@ -5,6 +6,13 @@
 `sprint-02/day-09/DAY_09_PLAN.md`
 
 ```markdown
+=======
+Here is your complete DAY_09_PLAN.md
+
+Save it as:
+sprint-02/day-09/DAY_09_PLAN.md
+
+>>>>>>> sprint-02/day-09-modular-etl
 # 📅 DAY 09 — Sprint 02 | Modular ETL Framework + Data Quality Checks
 ## Building Reusable Production Pipelines
 
@@ -38,6 +46,7 @@ cd C:\90_day_python_de_plan
 git checkout develop
 git pull origin develop
 git checkout -b sprint-02/day-09-modular-etl
+<<<<<<< HEAD
 ```
 
 ---
@@ -58,6 +67,17 @@ git checkout -b sprint-02/day-09-modular-etl
 Create `sprint-02/day-09/etl_framework.py`:
 
 ```python
+=======
+🎯 OBJECTIVES (2 hrs)
+Refactor yesterday’s ETL into a reusable class-based framework
+Add a dedicated data quality module
+Run both together as a mini pipeline
+Commit cleanly
+📝 EXERCISES
+EXERCISE 1 — Modular ETL Framework
+Create sprint-02/day-09/etl_framework.py:
+
+>>>>>>> sprint-02/day-09-modular-etl
 #!/usr/bin/env python3
 import sys
 from pathlib import Path
@@ -124,6 +144,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+<<<<<<< HEAD
 ```
 
 ### EXERCISE 2 — Data Quality Module
@@ -131,6 +152,11 @@ if __name__ == "__main__":
 Create `sprint-02/day-09/data_quality.py`:
 
 ```python
+=======
+EXERCISE 2 — Data Quality Module
+Create sprint-02/day-09/data_quality.py:
+
+>>>>>>> sprint-02/day-09-modular-etl
 #!/usr/bin/env python3
 from db_utils import execute_scalar
 from logger import get_pipeline_logger
@@ -159,6 +185,7 @@ def run_quality_checks():
 
 if __name__ == "__main__":
     run_quality_checks()
+<<<<<<< HEAD
 ```
 
 ---
@@ -179,20 +206,38 @@ if __name__ == "__main__":
 **Run the scripts:**
 
 ```bash
+=======
+✅ DAY 09 COMPLETION CHECKLIST
+#	Task	Done?
+1	Branch created	[ ]
+2	etl_framework.py runs successfully	[ ]
+3	data_quality.py runs successfully	[ ]
+4	New analytics table created	[ ]
+5	CSV exported in output/	[ ]
+6	One clean commit + merge	[ ]
+Run the scripts:
+
+>>>>>>> sprint-02/day-09-modular-etl
 mkdir -p sprint-02/day-09/output
 
 python sprint-02/day-09/etl_framework.py
 python sprint-02/day-09/data_quality.py
+<<<<<<< HEAD
 ```
 
 Then commit:
 
 ```powershell
+=======
+Then commit:
+
+>>>>>>> sprint-02/day-09-modular-etl
 python scripts/daily_commit.py \
   --day 9 \
   --sprint 2 \
   --message "Day 09: Modular ETL framework + data quality checks" \
   --merge
+<<<<<<< HEAD
 ```
 
 ---
@@ -222,6 +267,19 @@ Yes, we can (and should) add **Git History Cleanup** as a proper task in Day 09.
 **Save this as** `sprint-02/day-09/DAY_09_PLAN.md`
 
 ```markdown
+=======
+Reply with “Day 09 done” (or paste any output) when finished, and I will immediately give you DAY_10_PLAN.md.
+
+You're now building professional, reusable Data Engineering code. Keep the momentum! 🚀
+
+✅ Got it!
+
+Yes, we can (and should) add Git History Cleanup as a proper task in Day 09. Duplicate commits are a common beginner issue when running daily_commit.py multiple times, and learning how to clean them safely is excellent practice.
+
+Updated DAY_09_PLAN.md (with Git Cleanup Task)
+Save this as sprint-02/day-09/DAY_09_PLAN.md
+
+>>>>>>> sprint-02/day-09-modular-etl
 # 📅 DAY 09 — Sprint 02 | Modular ETL Framework + Data Quality + Git Cleanup
 ## Reusable Pipelines + Professional Git Hygiene
 
@@ -263,6 +321,7 @@ cd C:\90_day_python_de_plan
 git checkout develop
 git pull origin develop
 git checkout -b sprint-02/day-09-modular-etl
+<<<<<<< HEAD
 ```
 
 ---
@@ -293,6 +352,24 @@ git checkout -b sprint-02/day-09-modular-etl
 #### Step-by-step Safe Cleanup
 
 ```powershell
+=======
+🎯 OBJECTIVES (2 hrs)
+Build a reusable ETL framework (class-based)
+Add a data quality module
+Clean duplicate commits from Git history (new task)
+Run the improved pipeline
+📝 EXERCISES
+EXERCISE 1 — Modular ETL Framework
+(Use the version I gave you earlier — etl_framework.py)
+
+EXERCISE 2 — Data Quality Module
+(Use the version I gave you earlier — data_quality.py)
+
+EXERCISE 3 — Git History Cleanup (New Task)
+Goal: Remove duplicate commits from previous days (especially Day 05, 06, 08).
+
+Step-by-step Safe Cleanup
+>>>>>>> sprint-02/day-09-modular-etl
 cd C:\90_day_python_de_plan
 
 # 1. Go to the feature branch you want to clean
@@ -308,6 +385,7 @@ git rebase -i HEAD~10     # adjust number if needed (look at git log first)
 
 # 4. Force push the cleaned branch (safe because it's your feature branch)
 git push origin sprint-02/day-08-full-dataset --force-with-lease
+<<<<<<< HEAD
 ```
 
 **Important Rules:**
@@ -339,14 +417,40 @@ Run this cleanup now on any branch that has duplicates.
 4. Commit with:
 
 ```powershell
+=======
+Important Rules:
+
+Never do this on develop or main.
+Only clean unmerged feature branches.
+After cleaning, you can re-merge if needed.
+Run this cleanup now on any branch that has duplicates.
+
+✅ DAY 09 COMPLETION CHECKLIST
+#	Task	Done?
+1	Branch created	[ ]
+2	etl_framework.py runs successfully	[ ]
+3	data_quality.py runs successfully	[ ]
+4	Git history cleaned (duplicates removed)	[ ]
+5	One clean commit + merge	[ ]
+Next Steps:
+
+Replace the two files with the versions I gave you earlier.
+Run the cleanup steps above on the Day 08 branch (or any branch with duplicates).
+Run the two new scripts.
+Commit with:
+>>>>>>> sprint-02/day-09-modular-etl
 python scripts/daily_commit.py \
   --day 9 \
   --sprint 2 \
   --message "Day 09: Modular ETL framework + data quality checks + Git history cleanup" \
   --merge
+<<<<<<< HEAD
 ```
 
 Reply with **“Day 09 done”** (or paste output) when finished, and I’ll send you **DAY_10_PLAN.md**.
+=======
+Reply with “Day 09 done” (or paste output) when finished, and I’ll send you DAY_10_PLAN.md.
+>>>>>>> sprint-02/day-09-modular-etl
 
 Would you like me to also give you a one-command script to help with future Git cleanups? Just say yes.
 

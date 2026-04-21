@@ -43,3 +43,4 @@
 | 009 | S02 | 2026-04-18 01:25 | `cb2aa9d5` | `sprint-02/day-09-modular-etl` | Day 09: Modular ETL framework + data quality checks |
 | 009 | S02 | 2026-04-18 15:07 | `bb2b7dfe` | `develop` | Day 09: Modular ETL framework + data quality checks |
 | 011 | S02 | 2026-04-19 01:14 | `df173106` | `sprint-02/day-11-config-etl` | Day 11: Config-driven ETL pipeline using Pydantic |
+| 012 | S02 | 2026-04-21 23:43 | `f6f23e92` | `sprint-02/day-12-resilient-etl` | Day 12: Resilient ETL pipeline with retry logic + data quality checks + logger formatting fixes |

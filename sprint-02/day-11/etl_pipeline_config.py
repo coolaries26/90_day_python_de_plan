@@ -4,8 +4,9 @@ from pathlib import Path
 import pandas as pd
 
 _here = Path(__file__).resolve().parent
-sys.path.insert(0, str(_here.parent.parent / "sprint-01" / "day-02"))
-sys.path.insert(0, str(_here.parent.parent / "sprint-01" / "day-04"))
+sys.path.insert(0, str(_here.parent.parent / "sprint-01" / "day-02"))   # For db_utils
+sys.path.insert(0, str(_here.parent.parent / "sprint-01" / "day-04"))   # For logger
+
 
 from db_utils import get_engine
 from logger import get_pipeline_logger
@@ -17,7 +18,7 @@ logger = get_pipeline_logger("etl_config")
 class ConfigETLPipeline:
     def __init__(self):
         self.engine = get_engine()
-        logger.info("Initialized Config-Driven ETL | Pipeline: %s", settings.PIPELINE_NAME)
+        logger.info("Initialized Config-Driven ETL | Pipeline: {}", settings.PIPELINE_NAME)
 
     def run(self):
         logger.info("Running config-driven customer lifetime ETL...")
@@ -39,16 +40,16 @@ class ConfigETLPipeline:
         """
 
         df = pd.read_sql(sql, self.engine)
-        logger.info("Extracted %d rows", len(df))
+        logger.info("Extracted {} rows", len(df))
 
         # Load using config
         df.to_sql(settings.TARGET_TABLE, self.engine, if_exists="replace", index=False)
-        logger.info("✅ Loaded table: %s", settings.TARGET_TABLE)
+        logger.info("✅ Loaded table: {}", settings.TARGET_TABLE)
 
         # Export using config
         Path("sprint-02/day-11/output").mkdir(exist_ok=True)
         df.to_csv(f"sprint-02/day-11/output/{settings.OUTPUT_CSV}", index=False)
-        logger.info("📄 Exported CSV → %s", settings.OUTPUT_CSV)
+        logger.info("📄 Exported CSV → {}", settings.OUTPUT_CSV)
 
         logger.info("🎉 Config-Driven ETL completed successfully!")
 

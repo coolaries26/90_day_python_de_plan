@@ -19,24 +19,24 @@ class ETLPipeline:
     def __init__(self, pipeline_name: str):
         self.name = pipeline_name
         self.engine = get_engine()
-        logger.info("Initialized ETL Pipeline: %s", pipeline_name)
+        logger.info("Initialized ETL Pipeline: {}", pipeline_name)
 
     def extract(self, sql: str) -> pd.DataFrame:
         logger.info("Extracting data with query...")
         df = pd.read_sql(sql, self.engine)
-        logger.info("Extracted %d rows", len(df))
+        logger.info("Extracted {} rows", len(df))
         return df
 
     def load(self, df: pd.DataFrame, table_name: str, if_exists: str = "replace"):
-        logger.info("Loading data into table: %s", table_name)
+        logger.info("Loading data into table: {}", table_name)
         df.to_sql(table_name, self.engine, if_exists=if_exists, index=False)
-        logger.info("✅ Loaded %d rows into %s", len(df), table_name)
+        logger.info("✅ Loaded {} rows into {}", len(df), table_name)
 
     def export_csv(self, df: pd.DataFrame, filename: str):
         Path("sprint-02/day-09/output").mkdir(exist_ok=True)
         path = f"sprint-02/day-09/output/{filename}"
         df.to_csv(path, index=False)
-        logger.info("📄 Exported CSV → %s", path)
+        logger.info("📄 Exported CSV → {}", path)
 
 
 def main():
@@ -53,7 +53,7 @@ def main():
         LEFT JOIN rental r ON c.customer_id = r.customer_id
         LEFT JOIN payment p ON r.rental_id = p.rental_id
         GROUP BY c.customer_id, c.first_name, c.last_name
-        ORDER BY total_spend DESC
+        ORDER BY total_spend DESC 
     """
 
     df = pipeline.extract(sql)

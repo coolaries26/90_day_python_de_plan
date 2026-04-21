@@ -22,14 +22,14 @@ from jira_client import jira_client   # ← Corrected import
 logger = get_pipeline_logger("sprint01_runner")
 
 def run_day(module_path: str, description: str):
-    logger.info("▶️ Running %s", description)
+    logger.info("▶️ Running {}", description)
     start = time.perf_counter()
     try:
         __import__(module_path)
-        logger.info("✅ %s completed in %.1fs", description, time.perf_counter() - start)
+        logger.info("✅ {} completed in {:.1f}s", description, time.perf_counter() - start)
         return True
     except Exception as e:
-        logger.error("❌ %s failed: %s", description, e)
+        logger.error("❌ {} failed: {}", description, e)
         return False
 
 def generate_html_report():
@@ -48,7 +48,7 @@ def generate_html_report():
 <p><strong>Sprint 02 starts tomorrow!</strong></p>
 </body></html>"""
     report_path.write_text(html, encoding="utf-8")
-    logger.info("📊 HTML report generated → %s", report_path)
+    logger.info("📊 HTML report generated → {}", report_path)
 
 def main():
     log_pipeline_start(logger, "Sprint01_Capstone")
@@ -73,7 +73,7 @@ def main():
             sha="CAPSTONE"
         )
     except Exception as e:
-        logger.warning("JIRA post failed (non-blocking): %s", e)
+        logger.warning("JIRA post failed (non-blocking): {}", e)
 
     logger.info("🎉 SPRINT 01 COMPLETE!")
 

@@ -21,7 +21,7 @@ def run_incremental_load():
         FROM analytics_customer_lifetime_v2
     """)
 
-    logger.info("Last load timestamp: %s", last_load)
+    logger.info("Last load timestamp: {}", last_load)
 
     # Example incremental query
     count = execute_scalar(f"""
@@ -29,7 +29,7 @@ def run_incremental_load():
         WHERE rental_date > '{last_load}'
     """)
 
-    logger.info("New rentals since last load: %d rows", count)
+    logger.info("New rentals since last load: {} rows", count)
     logger.info("Incremental load logic is ready for production use.")
 
 

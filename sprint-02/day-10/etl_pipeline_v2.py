@@ -20,7 +20,7 @@ class ETLPipelineV2:
         self.name = pipeline_name
         self.engine = get_engine()
         self.load_timestamp = datetime.now()
-        logger.info("Initialized ETLPipelineV2: %s", pipeline_name)
+        logger.info("Initialized ETLPipelineV2: {}", pipeline_name)
 
     def run_customer_lifetime(self):
         logger.info("Running parameterised customer lifetime ETL...")
@@ -43,7 +43,7 @@ class ETLPipelineV2:
 
         df = pd.read_sql(sql, self.engine, params={"load_timestamp": self.load_timestamp})
 
-        logger.info("Extracted %d customer records", len(df))
+        logger.info("Extracted {} customer records", len(df))
 
         df.to_sql("analytics_customer_lifetime_v2", self.engine, if_exists="replace", index=False)
         logger.info("✅ Loaded analytics_customer_lifetime_v2")

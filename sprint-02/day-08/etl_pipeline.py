@@ -35,14 +35,14 @@ def main():
         ORDER BY total_spend DESC
     """, engine)
 
-    logger.info("Transformed customer analytics → %d rows", len(df))
+    logger.info("Transformed customer analytics → {} rows", len(df))
 
     df.to_sql("analytics_customer_lifetime", engine, if_exists="replace", index=False)
     logger.info("✅ Loaded table: analytics_customer_lifetime")
 
     output_path = "sprint-02/day-08/output/customer_lifetime_value.csv"
     df.to_csv(output_path, index=False)
-    logger.info("📄 Exported CSV → %s", output_path)
+    logger.info("📄 Exported CSV → {}", output_path)
 
     logger.info("🎉 ETL Pipeline completed successfully!")
 

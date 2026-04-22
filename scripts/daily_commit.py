@@ -438,15 +438,17 @@ def merge_to_develop(repo: Repo, source_branch: str) -> bool:
     """
     try:
         log.info(f"Merging {source_branch} → develop")
-
         repo.git.checkout("develop")
         repo.git.merge(source_branch, "--no-edit")
+        
+        # Use 'ours' strategy for progress.md — always take the incoming branch version
+        repo.git.merge(source_branch, "--no-edit", 
+                       "-X", "theirs")   # ← on conflict, prefer source branch
+        
 
         origin = repo.remote("origin")
         origin.push()
-
         log.info("Merged and pushed develop ✅")
-
         # Return to original branch
         repo.git.checkout(source_branch)
         log.info(f"Returned to {source_branch}")

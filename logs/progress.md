@@ -32,15 +32,3 @@
 | 005 | S01 | 2026-04-14 02:13 | `859b0df3` | `sprint-01/day-05-git-workflow` | Git workflow automation: GitPython fundamentals, daily_commit.py |
 | 005 | S01 | 2026-04-14 02:13 | `32a9adfd` | `sprint-01/day-05-git-workflow` | Git workflow automation: GitPython fundamentals, daily_commit.py |
 | 005 | S01 | 2026-04-15 01:37 | `6f5e2c92` | `sprint-01/day-05-git-workflow` | TEST: Day 05 retrospective |
-| 005 | S01 | 2026-04-15 01:38 | `89e3f167` | `sprint-01/day-05-git-workflow` | TEST: Day 05 retrospective |
-| 005 | S01 | 2026-04-15 22:58 | `84b8bd33` | `develop` | TEST: Day 05 retrospective |
-| 006 | S01 | 2026-04-15 23:56 | `b4812df7` | `sprint-01/day-06-jira-automation` | JIRA automation + Pydantic config complete |
-| 006 | S01 | 2026-04-15 23:56 | `f9d8fd63` | `sprint-01/day-06-jira-automation` | JIRA automation + Pydantic config complete |
-| 006 | S01 | 2026-04-16 00:59 | `ed2951af` | `sprint-01/day-06-jira-automation` | JIRA automation + Pydantic config complete |
-| 007 | S01 | 2026-04-17 00:23 | `5d760525` | `develop` | Sprint 01 COMPLETE — pipeline runner + HTML report + test passed |
-| 007 | S01 | 2026-04-17 01:58 | `61a73d04` | `develop` | Sprint 01 COMPLETE — final JIRA API fix + pipeline runner |
-| 008 | S02 | 2026-04-18 00:22 | `ca486da8` | `sprint-02/day-08-full-dataset` | Day 08: Full dataset validation + first production ETL pipeline completed |
-| 009 | S02 | 2026-04-18 01:25 | `cb2aa9d5` | `sprint-02/day-09-modular-etl` | Day 09: Modular ETL framework + data quality checks |
-| 009 | S02 | 2026-04-18 15:07 | `bb2b7dfe` | `develop` | Day 09: Modular ETL framework + data quality checks |
-| 011 | S02 | 2026-04-19 01:14 | `df173106` | `sprint-02/day-11-config-etl` | Day 11: Config-driven ETL pipeline using Pydantic |
-| 012 | S02 | 2026-04-21 23:43 | `f6f23e92` | `sprint-02/day-12-resilient-etl` | Day 12: Resilient ETL pipeline with retry logic + data quality checks + logger formatting fixes |

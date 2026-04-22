@@ -55,3 +55,4 @@ pytest-cov==4.1.0
 
 # ── Sprint 13: JIRA Automation (uncomment at Day 85) ─────────────────────────
 # jira==3.6.0
+GitPython==3.1.41

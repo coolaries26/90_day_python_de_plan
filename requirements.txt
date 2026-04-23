@@ -62,3 +62,5 @@ pydantic==2.10.1
 pydantic-settings==2.7.0
 =======
 >>>>>>> sprint-01/day-05-git-workflow
+mypy==1.7.1
+pandas-stubs==2.1.4.231227

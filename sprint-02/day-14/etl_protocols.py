@@ -131,6 +131,7 @@ class ETLProtocol(Protocol):
             df = pipeline.extract()
             df = pipeline.transform(df)
             pipeline.load(df)
+            pipeline.export_csv(df)
     """
 
     def extract(self) -> pd.DataFrame:
@@ -145,6 +146,9 @@ class ETLProtocol(Protocol):
         """Write to target. Must return row count loaded."""
         ...
 
+    def export_csv(self, df: pd.DataFrame) -> Path:
+        """Export DataFrame to CSV."""
+        ...
 
 # ── PipelineRegistry: look up pipeline class by name ─────────────────────────
 class PipelineRegistry:
@@ -207,11 +211,14 @@ if __name__ == "__main__":
         source_table="customer",
         target_table="analytics_customer",
     )
-    result.complete(rows_extracted=599, rows_loaded=599, attempts=1)
+    result.complete(rows_extracted=599, rows_loaded=599, export_csv=Path("c:\\output_dir\\analytics_customer_oop.csv"), attempts=1)
     print(result)
     print(f"  Elapsed: {result.elapsed_seconds:.3f}s")
     print(f"  Success: {result.success}")
 
     print("\n── PipelineRegistry demo ────────────────────────")
     registry = PipelineRegistry()
+    registry.register("customer", dict)   # placeholder class for demo
+    registry.register("film", dict)
     print(registry)
+# → PipelineRegistry(pipelines=['customer', 'film'])    

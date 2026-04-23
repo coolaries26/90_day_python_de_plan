@@ -223,12 +223,12 @@ class CustomerETLPipeline(BaseETLPipeline):
         df['load_date'] = pd.Timestamp.now().date()
         return df
 
-    def load(self, df: pd.DataFrame):
+    def load(self, df: pd.DataFrame) -> int:
             df.to_sql(self.config.target_table, self.engine, if_exists="replace", index=False)
             logger.info("✅ Loaded {} rows into {}", len(df), self.config.target_table)
             return len(df)
 
-    def export_csv(self, df: pd.DataFrame):
+    def export_csv(self, df: pd.DataFrame) -> Path:
         # Always anchor paths to the file's own location — never relative strings
         output_dir = Path(__file__).parent / "output"
         output_dir.mkdir(parents=True, exist_ok=True)   # parents=True handles missing parents

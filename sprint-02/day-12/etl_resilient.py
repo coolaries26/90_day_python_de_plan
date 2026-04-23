@@ -24,7 +24,7 @@ class ResilientETLPipeline:
         self.max_retries = max_retries
         logger.info("Initialized Resilient ETL Pipeline | max_retries= {} ", max_retries)
 
-    def run(self):
+    def run(self) -> pd.DataFrame:
         """Main entry point with retry logic."""
         for attempt in range(1, self.max_retries + 1):
             try:
@@ -70,11 +70,13 @@ class ResilientETLPipeline:
         df.to_sql(settings.TARGET_TABLE, self.engine, if_exists="replace", index=False)
         logger.info("✅ Loaded {} rows into {}", len(df), settings.TARGET_TABLE)
 
-    def export_csv(self, df: pd.DataFrame):
-        Path("sprint-02/day-12/output").mkdir(exist_ok=True)
-        path = f"sprint-02/day-12/output/{settings.OUTPUT_CSV}"
+    def export_csv(self, df: pd.DataFrame) -> None:
+        # Always anchor paths to the file's own location — never relative strings
+        output_dir = Path(__file__).parent / "output"
+        output_dir.mkdir(parents=True, exist_ok=True)   # parents=True handles missing parents
+        path = output_dir / settings.OUTPUT_CSV
         df.to_csv(path, index=False)
-        logger.info("📄 Exported CSV → {}", path)
+        logger.info(f"📄 Exported CSV -> {path}") 
 
 
 if __name__ == "__main__":

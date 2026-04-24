@@ -202,7 +202,7 @@ def append_progress_log(day: int, sprint: int,
 
 
 # ── Q2: merge_to_main() — WRITE THIS YOURSELF ────────────────────────────────
-def merge_to_main(repo: Repo) -> bool:
+def merge_to_main(repo: Repo, source_branch: str) -> bool:
     """
     Q2 — YOUR TASK:
     Merge develop into main and push main.

@@ -321,7 +321,7 @@ def main():
 
     if args.to_main:
         try:
-            merge_to_main(repo)
+            merge_to_main(repo, branch)
         except NotImplementedError as exc:
             log.warning("merge_to_main not implemented yet: {}", exc)
 

@@ -13,13 +13,13 @@ class AppSettings(BaseSettings):
     JIRA_URL: str
     JIRA_USERNAME: str
     JIRA_API_TOKEN: SecretStr
-    JIRA_PROJECT_KEY: str = "EP01"
+    JIRA_PROJECT_KEY: str   # ← Default value, can be overridden by .env
 
     APP_ENV: str = "development"
     LOG_LEVEL: str = "INFO"
 
     @property
     def jira_auth(self):
-        return (self.JIRA_USERNAME, self.JIRA_API_TOKEN.get_secret_value())
+        return ( self.JIRA_USERNAME, self.JIRA_API_TOKEN.get_secret_value())
 
 settings = AppSettings()

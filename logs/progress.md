@@ -37,3 +37,4 @@
 | 005 | S01 | 2026-04-23 00:38 | `6ddb83fd` | `develop` | sprint end test |
 | 014 | S02 | 2026-04-24 00:22 | `7ee48b4f` | `sprint-02/day-14-oop-deepdive` | OOP deep-dive: ETLConfig dataclass, ETLProtocol, BaseETLPipeline, CustomerETLPipeline, path bug fixed |
 | 015 | S02 | 2026-04-24 01:44 | `7b99ec5d` | `sprint-03/day-15-type-hints` | Type hints + mypy: etl_protocols and oop_etl fully annotated, typed_utils.py, mypy.ini added |
+| 016 | S03 | 2026-04-25 20:59 | `a8491a79` | `sprint-03/day-16-sqlalchemy-orm` | SQLAlchemy ORM models (5 tables), Alembic init, etl_audit_log migration, ORM queries, audit writer |

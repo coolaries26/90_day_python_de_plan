@@ -9,12 +9,13 @@ print("DEBUG: Script running from →", _here)
 
 sys.path.insert(0, str(_here))
 sys.path.insert(0, str(_here.parent / "day-04"))
+sys.path.insert(0, str(_here / "config"))
 
 print("DEBUG: sys.path[0..1] →", sys.path[:2])
 
 from jira import JIRA
 from logger import get_pipeline_logger
-from config.settings import settings
+from settings import settings
 
 logger = get_pipeline_logger("jira_client")
 
@@ -28,8 +29,8 @@ class JiraClient:
         """Temporary hardcoded project key + debug print"""
         
         # === TEMPORARY HARDCODE (for debugging) ===
-        project_key = "SCRUM"          # ← Change only this line if needed
-        print(f"DEBUG: Using JIRA project key = '{project_key}'")   # ← This will show us the truth
+        #project_key = "SCRUM"          # ← Change only this line if needed
+        print(f"DEBUG: Using JIRA project key = '{settings.JIRA_PROJECT_KEY}'")   # ← This will show us the truth
         
         summary = f"[DAY-{day:03d}][S{sprint:02d}] Daily Progress — Python DE Journey"
         description = f"""
@@ -40,7 +41,7 @@ h3. Day {day:03d} — Sprint {sprint:02d}
         """
 
         issue = self.jira.create_issue(
-            project=project_key,                    # ← using hardcoded key
+            project=settings.JIRA_PROJECT_KEY,                    # ← using settings key
             summary=summary,
             description=description,
             issuetype={"name": "Task"},

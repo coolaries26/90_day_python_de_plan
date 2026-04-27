@@ -40,3 +40,4 @@
 | 016 | S03 | 2026-04-25 20:59 | `a8491a79` | `sprint-03/day-16-sqlalchemy-orm` | SQLAlchemy ORM models (5 tables), Alembic init, etl_audit_log migration, ORM queries, audit writer |
 | 017 | S03 | 2026-04-27 00:57 | `e806f40f` | `sprint-03/day-17-pandas-depth` | Pandas depth: groupby transform, rolling, expanding, rank, shift, pct_change, time series on payment data |
 | 018 | S03 | 2026-04-28 02:59 | `437584b4` | `sprint-03/day-18-pytest-depth` | pytest depth: conftest fixtures, 3/3 ETL tests passing, parametrize, caplog |
+| 018 | S03 | 2026-04-28 03:07 | `a4737655` | `sprint-03/day-18-pytest-depth` | pytest depth: conftest fixtures, 3/3 ETL tests passing, parametrize, caplog |

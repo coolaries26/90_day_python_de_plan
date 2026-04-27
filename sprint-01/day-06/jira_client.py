@@ -19,46 +19,115 @@ from settings import settings
 
 logger = get_pipeline_logger("jira_client")
 
-class JiraClient:
-    def __init__(self):
-        self.jira = JIRA(server=settings.JIRA_URL, basic_auth=settings.jira_auth)
-        logger.info("✅ Connected to JIRA | project={}", settings.JIRA_PROJECT_KEY)
+def create_or_update_daily_task(
+    self,
+    day: int,
+    sprint: int,
+    message: str,
+    sha: str,
+    epic_name: str = "",
+    story_points: int = 3,
+    priority: str = "High",
+    labels: list[str] | None = None,
+) -> str:
+    """
+    Create or update a JIRA task matching the daily plan's JIRA card format.
+    Searches for existing open task for this day first — updates if found.
+    """
+    from datetime import datetime
 
+    summary = f"[DAY-{day:03d}][S{sprint:02d}] {message[:80]}"
+    labels = labels or ["python-de-journey", f"day-{day:03d}", f"sprint-{sprint:02d}"]
 
-    def create_or_update_daily_task(self, day: int, sprint: int, message: str, sha: str) -> str:
-        """Temporary hardcoded project key + debug print"""
-        
-        # === TEMPORARY HARDCODE (for debugging) ===
-        #project_key = "SCRUM"          # ← Change only this line if needed
-        print(f"DEBUG: Using JIRA project key = '{settings.JIRA_PROJECT_KEY}'")   # ← This will show us the truth
-        
-        summary = f"[DAY-{day:03d}][S{sprint:02d}] Daily Progress — Python DE Journey"
-        description = f"""
-h3. Day {day:03d} — Sprint {sprint:02d}
-*Message:* {message}
-*Commit:* {sha}
-*Branch:* sprint-01/day-07-sprint-review
-        """
+    description = (
+        f"h3. Day {day:03d} — Sprint {sprint:02d}\n\n"
+        f"*Message:* {message}\n"
+        f"*Commit SHA:* {sha}\n"
+        f"*Date:* {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n"
+        f"*Epic:* {epic_name or 'Python DE Journey'}\n"
+        f"*Story Points:* {story_points}\n"
+    )
 
-        issue = self.jira.create_issue(
-            project=settings.JIRA_PROJECT_KEY,                    # ← using settings key
-            summary=summary,
-            description=description,
-            issuetype={"name": "Task"},
-            labels=["automation", f"day-{day:03d}"]
-        )
+    # Search for existing open task for this day
+    jql = (
+        f'project = "{settings.JIRA_PROJECT_KEY}" '
+        f'AND summary ~ "DAY-{day:03d}" '
+        f'AND summary ~ "S{sprint:02d}" '
+        f'AND statusCategory != Done '
+        f'ORDER BY created DESC'
+    )
 
+    try:
+        existing = self.jira.search_issues(jql, maxResults=1)
+    except Exception as exc:
+        logger.warning(f"JIRA search failed | {exc} | creating new task")
+        existing = []
+
+    if existing:
+        # Update existing task
+        issue = existing[0]
+        issue.update(summary=summary, description=description)
+        self.jira.add_comment(issue.key, f"Progress update: {message}\nSHA: {sha}")
+        logger.info(f"Updated JIRA task | {issue.key}")
+    else:
+        # Build create payload — only include fields the project supports
+        payload: dict = {
+            "project":     {"key": settings.JIRA_PROJECT_KEY},
+            "summary":     summary,
+            "description": description,
+            "issuetype":   {"name": "Task"},
+            "priority":    {"name": priority},
+            "labels":      labels,
+        }
+
+        # Story points — field name varies by JIRA instance
+        # Try story_points field — skip if project doesn't support it
+        for sp_field in ["story_points", "customfield_10016",
+                         "customfield_10028", "customfield_10014"]:
+            try:
+                test_payload = {**payload, sp_field: story_points}
+                issue = self.jira.create_issue(**test_payload)
+                logger.info(f"Created JIRA task | {issue.key} | sp_field={sp_field}")
+                break
+            except Exception:
+                continue
+        else:
+            # Create without story points if all field names failed
+            issue = self.jira.create_issue(**payload)
+            logger.info(f"Created JIRA task | {issue.key} | (no story points)")
+
+    # Log 2h work
+    try:
         self.jira.add_worklog(issue.key, timeSpent="2h")
-        logger.info("✅ Created new JIRA task | {}", issue.key)
+        logger.info(f"Logged 2h on {issue.key}")
+    except Exception as exc:
+        logger.warning(f"Worklog failed (non-blocking) | {exc}")
 
-        # Save proof
-        Path("sprint-01/day-06/output").mkdir(exist_ok=True)
-        import json
-        with open("sprint-01/day-06/output/jira_demo.json", "w") as f:
-            json.dump({"issue_key": issue.key, "summary": issue.fields.summary}, f, indent=2)
+    # Trsnsition to In Progress if still To Do
+    try:
+        transitions = self.jira.transitions(issue.key)
+        in_progress = next(
+            (t for t in transitions
+             if "progress" in t["name"].lower() or "start" in t["name"].lower()),
+            None
+        )
+        if in_progress:
+            self.jira.transition_issue(issue.key, in_progress["id"])
+            logger.info(f"Transitioned {issue.key} → In Progress")
+    except Exception as exc:
+        logger.warning(f"Transition failed (non-blocking) | {exc}")
 
-        return issue.key
-    
+    # Save proof file
+    import json
+    out_dir = Path(__file__).parent / "output"
+    out_dir.mkdir(exist_ok=True)
+    with open(out_dir / "jira_demo.json", "w", encoding="utf-8") as f:
+        json.dump({
+            "issue_key":   issue.key,
+            "summary":     issue.fields.summary,
+            "day":         day,
+            "sprint":      sprint,
+            "sha":         sha,
+        }, f, indent=2)
 
-# Create singleton
-jira_client = JiraClient()
+    return issue.key

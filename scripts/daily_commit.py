@@ -23,14 +23,15 @@ from pathlib import Path
 from venv import logger
 # ── PATH FIX FOR JIRA CLIENT (Day 06) ─────────────────────────────
 _here = Path(__file__).resolve().parent
-sys.path.insert(0, str(_here.parent.parent / "sprint-01" / "day-06"))
-print("DEBUG: Added path for jira_client →", _here.parent / "sprint-01" / "day-06") 
+sys.path.insert(0, str(_here.parent / "sprint-01" / "day-06"))
+print("DEBUG: Added path for jira_client →", _here.parent / "sprint-01" / "day-06")     # for JiRA client import
+from jira_client import create_or_update_daily_task
 import os
 from datetime import datetime
 from pathlib import Path
 
 from git import Repo, GitCommandError, InvalidGitRepositoryError
-#from jira_client import jira_client
+
 
 # ── Bootstrap paths ───────────────────────────────────────────────────────────
 _scripts_dir = Path(__file__).resolve().parent
@@ -329,7 +330,7 @@ def main():
             # === JIRA AUTOMATION (Day 06) ===
 # In daily_commit.py main(), replace the JIRA block with:
         try:
-            issue_key = jira_client.create_or_update_daily_task(
+            issue_key = create_or_update_daily_task(
                 day=args.day,
                 sprint=sprint,
                 message=args.message,

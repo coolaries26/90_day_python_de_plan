@@ -41,3 +41,4 @@
 | 017 | S03 | 2026-04-27 00:57 | `e806f40f` | `sprint-03/day-17-pandas-depth` | Pandas depth: groupby transform, rolling, expanding, rank, shift, pct_change, time series on payment data |
 | 018 | S03 | 2026-04-28 02:59 | `437584b4` | `sprint-03/day-18-pytest-depth` | pytest depth: conftest fixtures, 3/3 ETL tests passing, parametrize, caplog |
 | 018 | S03 | 2026-04-28 03:07 | `a4737655` | `sprint-03/day-18-pytest-depth` | pytest depth: conftest fixtures, 3/3 ETL tests passing, parametrize, caplog |
+| 019 | S03 | 2026-04-28 03:22 | `cbc06ba1` | `sprint-03/day-19-coverage` | JIRA fixed: classic token, DPP-XX auto-created |

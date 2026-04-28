@@ -18,8 +18,8 @@ import pytest
 import logging
 
 _here = Path(__file__).resolve().parent
-sys.path.insert(0, str(_here.parent.parent / "sprint-01" / "day-04"))
-sys.path.insert(0, str(_here.parent.parent / "sprint-02" / "day-12"))
+sys.path.insert(0, str(_here.parent.parent / "sprint-01" / "day-04"))   # for logger.py
+sys.path.insert(0, str(_here.parent.parent / "sprint-02" / "day-12"))   # For resilient ETL pipeline
 
 from etl_resilient import ResilientETLPipeline
 from logger import get_pipeline_logger

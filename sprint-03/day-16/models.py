@@ -206,6 +206,7 @@ class AuditLog(Base):
     elapsed_s:       Mapped[Decimal | None] = mapped_column(Numeric(8, 3), nullable=True)
     error_message:   Mapped[str | None]     = mapped_column(Text, nullable=True)
     run_at:          Mapped[datetime]       = mapped_column(DateTime, nullable=False, server_default=func.now())  
+    value_tier:      Mapped[str | None]     = mapped_column(String(20), nullable=True)
 
     def __repr__(self) -> str:
         return (f"AuditLog(id={self.id}, pipeline={self.pipeline_name!r}, "

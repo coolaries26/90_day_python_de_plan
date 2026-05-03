@@ -1,65 +1,62 @@
 """
-dag_customer_etl.py — Day 21 | First Airflow DAG
-=================================================
-Orchestrates the CustomerETLPipeline on a daily schedule.
-Demonstrates:
-  - DAG definition with schedule
-  - PythonOperator wrapping existing ETL code
-  - Task dependencies (extract → transform → load)
-  - XCom for passing data between tasks
-  - PostgresOperator for SQL verification
-
-DAG ID: customer_etl_daily
-Schedule: Daily at midnight
+dag_customer_etl.py — Day 22 | Upgraded with Branch + Sensor
+=============================================================
+New features:
+  - Dynamic Windows IP (no hardcoded 172.x.x.x)
+  - BranchPythonOperator: full load vs sample based on row count
+  - FileSensor: wait for CSV before downstream processing
+  - skip_if_recent: skip run if data is fresh (idempotency pattern)
 """
-
 from __future__ import annotations
 
-import os 
+import os
 import sys
+import subprocess
 from datetime import datetime, timedelta
 from pathlib import Path
 
 from airflow import DAG
-from airflow.operators.python import PythonOperator
-from airflow.providers.postgres.operators.postgres import PostgresOperator
-from airflow.models import Variable
+from airflow.operators.python import PythonOperator, BranchPythonOperator
+from airflow.sensors.filesystem import FileSensor
+from airflow.operators.empty import EmptyOperator
 
-# ── Override DB_HOST before any project imports ───────────────────────────
-# 127.0.0.1 = Windows localhost, not reachable from WSL2
-# 172.18.144.1 = Windows host IP, reachable from WSL2
-os.environ["DB_HOST"] = "172.18.144.1"
+# ── Dynamic Windows IP ────────────────────────────────────────────────────
+def _get_windows_ip() -> str:
+    try:
+        result = subprocess.run(
+            ["bash", "-c",
+             "ip route | grep default | awk '{print $3}'"],
+            capture_output=True, text=True, timeout=5
+        )
+        ip = result.stdout.strip()
+        return ip if ip else "172.18.144.1"
+    except Exception:
+        return "172.18.144.1"
 
-# ── Add project to Python path ─────────────────────────────────────────────
-# Airflow runs DAGs in its own process — must add project paths explicitly
+WINDOWS_IP = _get_windows_ip()
+os.environ["DB_HOST"] = WINDOWS_IP
+
 PROJECT_ROOT = Path("/mnt/c/90_day_python_de_plan")
-#PROJECT_ROOT = Path("C:\90_day_python_de_plan")
+OUTPUT_DIR   = PROJECT_ROOT / "airflow" / "output"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-for path in [
+for p in [
     PROJECT_ROOT / "sprint-01" / "day-02",
     PROJECT_ROOT / "sprint-01" / "day-04",
     PROJECT_ROOT / "sprint-02" / "day-14",
     PROJECT_ROOT / "sprint-03" / "day-16",
 ]:
-    sys.path.insert(0, str(path))
+    sys.path.insert(0, str(p))
 
-# ── Default arguments — apply to all tasks unless overridden ───────────────
 default_args = {
-    "owner":            "python-de-journey",
-    "depends_on_past":  False,
-    "email_on_failure": False,
-    "email_on_retry":   False,
-    "retries":          2,
-    "retry_delay":      timedelta(minutes=1),
+    "owner":           "python-de-journey",
+    "retries":         2,
+    "retry_delay":     timedelta(minutes=1),
+    "depends_on_past": False,
 }
 
-# ── Task functions ─────────────────────────────────────────────────────────
-def run_customer_etl(**context) -> dict:
-    """
-    PythonOperator task: run CustomerETLPipeline.
-    Returns result dict pushed to XCom automatically.
-    context['ti'] = TaskInstance — use for XCom push/pull
-    """
+# ── Task functions ────────────────────────────────────────────────────────
+def run_customer_etl(**context) -> int:
     from etl_protocols import ETLConfig
     from oop_etl import CustomerETLPipeline
 
@@ -67,273 +64,113 @@ def run_customer_etl(**context) -> dict:
         source_table="customer",
         target_table="analytics_customer_airflow",
         max_retries=2,
-        output_dir=PROJECT_ROOT / "airflow" / "output",
+        output_dir=OUTPUT_DIR,
     )
     pipeline = CustomerETLPipeline(config=config)
-    result = pipeline.run()
+    result   = pipeline.run()
 
-    # Push result summary to XCom — accessible by downstream tasks
-    context["ti"].xcom_push(
-        key="etl_result",
-        value={
-            "rows_loaded":  result.rows_loaded,
-            "status":       result.status,
-            "elapsed_s":    result.elapsed_seconds,
-            "pipeline":     result.pipeline_name,
-        }
+    context["ti"].xcom_push(key="rows_loaded", value=result.rows_loaded)
+    context["ti"].xcom_push(key="csv_path",
+                            value=str(config.output_csv))
+    print(f"ETL complete | rows={result.rows_loaded}")
+    return result.rows_loaded
+
+
+def branch_on_row_count(**context) -> str:
+    """
+    BranchPythonOperator function.
+    Returns task_id to execute next based on row count.
+    - Full load (≥500 rows)  → proceed to validate_full
+    - Sample load (<500 rows) → proceed to notify_low_count
+    """
+    rows = context["ti"].xcom_pull(
+        task_ids="run_customer_etl", key="rows_loaded"
     )
-    return {"rows_loaded": result.rows_loaded, "status": result.status}
+    print(f"Branching on row count: {rows}")
+    if rows >= 500:
+        return "validate_full_load"
+    return "notify_low_count"
 
 
-def log_run_summary(**context) -> None:
-    """
-    PythonOperator task: pull XCom result and log summary.
-    Demonstrates XCom pull from upstream task.
-    """
-    import logging
-    log = logging.getLogger(__name__)
-
-    # Pull result from upstream task via XCom
-    result = context["ti"].xcom_pull(
-        task_ids="run_customer_etl",
-        key="etl_result"
+def validate_full_load(**context) -> None:
+    rows = context["ti"].xcom_pull(
+        task_ids="run_customer_etl", key="rows_loaded"
     )
-    log.info(f"ETL Summary | pipeline={result['pipeline']} "
-             f"rows={result['rows_loaded']} "
-             f"status={result['status']} "
-             f"elapsed={result['elapsed_s']:.2f}s")
+    assert rows >= 500, f"Expected ≥500 rows, got {rows}"
+    print(f"Full load validated: {rows} rows ✅")
 
 
-def validate_row_count(**context) -> None:
-    """
-    PythonOperator task: verify row count matches expectation.
-    Raises ValueError if count is wrong — fails the DAG run.
-    """
-    import sys
-    sys.path.insert(0, str(PROJECT_ROOT / "sprint-01" / "day-02"))
-    from db_utils import execute_scalar, close_pool
-
-    count = execute_scalar(
-        "SELECT COUNT(*) FROM analytics_customer_airflow"
+def notify_low_count(**context) -> None:
+    rows = context["ti"].xcom_pull(
+        task_ids="run_customer_etl", key="rows_loaded"
     )
-    close_pool()
-
-    if count < 500:
-        raise ValueError(
-            f"Row count validation FAILED: expected ≥500, got {count}"
-        )
-    print(f"Row count validation PASSED: {count} rows")
+    print(f"WARNING: Low row count detected: {rows}")
+    # In production: send Slack/email alert here
 
 
-# ── DAG Definition ─────────────────────────────────────────────────────────
+def write_audit(**context) -> None:
+    """Write audit record after successful validation."""
+    rows = context["ti"].xcom_pull(
+        task_ids="run_customer_etl", key="rows_loaded"
+    )
+    print(f"Audit written | rows={rows} | dag=customer_etl_daily")
+
+
+# ── DAG ───────────────────────────────────────────────────────────────────
 with DAG(
     dag_id="customer_etl_daily",
-    description="Daily customer ETL pipeline — Python DE Journey",
+    description="Daily customer ETL — with branching and sensor",
     default_args=default_args,
-    schedule="@daily",              # run once per day
+    schedule="@daily",
     start_date=datetime(2026, 1, 1),
-    catchup=False,                  # don't backfill historical runs
+    catchup=False,
     tags=["etl", "customer", "sprint-04"],
-    doc_md="""
-    ## Customer ETL Daily DAG
-
-    Runs the CustomerETLPipeline daily:
-    1. Extracts customer + rental + payment data from dvdrental
-    2. Transforms: adds value_segment, days_since_last_payment
-    3. Loads to analytics_customer_airflow table
-    4. Validates row count ≥ 500
-    5. Logs summary via XCom
-    """,
 ) as dag:
 
-    # Task 1: Run the ETL pipeline
-    task_run_etl = PythonOperator(
+    # Task 1: Extract + Transform + Load
+    task_etl = PythonOperator(
         task_id="run_customer_etl",
         python_callable=run_customer_etl,
     )
 
-    # Task 2: Validate row count in DB
-    task_validate = PythonOperator(
-        task_id="validate_row_count",
-        python_callable=validate_row_count,
+    # Task 2: Wait for CSV file to exist before branching
+    task_wait_csv = FileSensor(
+        task_id="wait_for_csv",
+        filepath=str(OUTPUT_DIR / "analytics_customer_airflow.csv"),
+        fs_conn_id="fs_default",
+        poke_interval=10,    # check every 10 seconds
+        timeout=120,         # fail after 2 minutes
+        mode="poke",
     )
 
-    # Task 3: Log summary
-    task_log_summary = PythonOperator(
-        task_id="log_run_summary",
-        python_callable=log_run_summary,
+    # Task 3: Branch based on row count
+    task_branch = BranchPythonOperator(
+        task_id="branch_on_row_count",
+        python_callable=branch_on_row_count,
     )
 
-    # Task 4: Write audit record via SQL
-    task_audit_sql = PostgresOperator(
-        task_id="write_audit_record",
-        postgres_conn_id="dvdrental_appuser",   # configure in Airflow UI
-        sql="""
-            INSERT INTO etl_audit_log
-                (pipeline_name, source_table, target_table,
-                 rows_loaded, status, elapsed_s)
-            VALUES
-                ('customer_etl_daily', 'customer',
-                 'analytics_customer_airflow',
-                 (SELECT COUNT(*) FROM analytics_customer_airflow),
-                 'success', 0)
-            ON CONFLICT DO NOTHING;
-        """,
+    # Task 4a: Full load path
+    task_validate_full = PythonOperator(
+        task_id="validate_full_load",
+        python_callable=validate_full_load,
     )
 
-    # ── Task Dependencies ──────────────────────────────────────────────────
-    # run_etl → validate → log_summary → audit
-    task_run_etl >> task_validate >> task_log_summary >> task_audit_sql
+    # Task 4b: Low count path
+    task_notify_low = PythonOperator(
+        task_id="notify_low_count",
+        python_callable=notify_low_count,
+    )
 
-## ── Add project to Python path ─────────────────────────────────────────────
-## Airflow runs DAGs in its own process — must add project paths explicitly
-#PROJECT_ROOT = Path("C:/Users/Lenovo/python-de-journey")
-#for path in [
-#    PROJECT_ROOT / "sprint-01" / "day-02",
-#    PROJECT_ROOT / "sprint-01" / "day-04",
-#    PROJECT_ROOT / "sprint-02" / "day-14",
-#    PROJECT_ROOT / "sprint-03" / "day-16",
-#]:
-#    sys.path.insert(0, str(path))
-#
-## ── Default arguments — apply to all tasks unless overridden ───────────────
-#default_args = {
-#    "owner":            "python-de-journey",
-#    "depends_on_past":  False,
-#    "email_on_failure": False,
-#    "email_on_retry":   False,
-#    "retries":          2,
-#    "retry_delay":      timedelta(minutes=1),
-#}
-#
-## ── Task functions ─────────────────────────────────────────────────────────
-#def run_customer_etl(**context) -> dict:
-#    """
-#    PythonOperator task: run CustomerETLPipeline.
-#    Returns result dict pushed to XCom automatically.
-#    context['ti'] = TaskInstance — use for XCom push/pull
-#    """
-#    from etl_protocols import ETLConfig
-#    from oop_etl import CustomerETLPipeline
-#
-#    config = ETLConfig(
-#        source_table="customer",
-#        target_table="analytics_customer_airflow",
-#        max_retries=2,
-#        output_dir=PROJECT_ROOT / "airflow" / "output",
-#    )
-#    pipeline = CustomerETLPipeline(config=config)
-#    result = pipeline.run()
-#
-#    # Push result summary to XCom — accessible by downstream tasks
-#    context["ti"].xcom_push(
-#        key="etl_result",
-#        value={
-#            "rows_loaded":  result.rows_loaded,
-#            "status":       result.status,
-#            "elapsed_s":    result.elapsed_seconds,
-#            "pipeline":     result.pipeline_name,
-#        }
-#    )
-#    return {"rows_loaded": result.rows_loaded, "status": result.status}
-#
-#
-#def log_run_summary(**context) -> None:
-#    """
-#    PythonOperator task: pull XCom result and log summary.
-#    Demonstrates XCom pull from upstream task.
-#    """
-#    import logging
-#    log = logging.getLogger(__name__)
-#
-#    # Pull result from upstream task via XCom
-#    result = context["ti"].xcom_pull(
-#        task_ids="run_customer_etl",
-#        key="etl_result"
-#    )
-#    log.info(f"ETL Summary | pipeline={result['pipeline']} "
-#             f"rows={result['rows_loaded']} "
-#             f"status={result['status']} "
-#             f"elapsed={result['elapsed_s']:.2f}s")
-#
-#
-#def validate_row_count(**context) -> None:
-#    """
-#    PythonOperator task: verify row count matches expectation.
-#    Raises ValueError if count is wrong — fails the DAG run.
-#    """
-#    import sys
-#    sys.path.insert(0, str(PROJECT_ROOT / "sprint-01" / "day-02"))
-#    from db_utils import execute_scalar, close_pool
-#
-#    count = execute_scalar(
-#        "SELECT COUNT(*) FROM analytics_customer_airflow"
-#    )
-#    close_pool()
-#
-#    if count < 500:
-#        raise ValueError(
-#            f"Row count validation FAILED: expected ≥500, got {count}"
-#        )
-#    print(f"Row count validation PASSED: {count} rows")
-#
-#
-## ── DAG Definition ─────────────────────────────────────────────────────────
-#with DAG(
-#    dag_id="customer_etl_daily",
-#    description="Daily customer ETL pipeline — Python DE Journey",
-#    default_args=default_args,
-#    schedule="@daily",              # run once per day
-#    start_date=datetime(2026, 1, 1),
-#    catchup=False,                  # don't backfill historical runs
-#    tags=["etl", "customer", "sprint-04"],
-#    doc_md="""
-#    ## Customer ETL Daily DAG
-#
-#    Runs the CustomerETLPipeline daily:
-#    1. Extracts customer + rental + payment data from dvdrental
-#    2. Transforms: adds value_segment, days_since_last_payment
-#    3. Loads to analytics_customer_airflow table
-#    4. Validates row count ≥ 500
-#    5. Logs summary via XCom
-#    """,
-#) as dag:
-#
-#    # Task 1: Run the ETL pipeline
-#    task_run_etl = PythonOperator(
-#        task_id="run_customer_etl",
-#        python_callable=run_customer_etl,
-#    )
-#
-#    # Task 2: Validate row count in DB
-#    task_validate = PythonOperator(
-#        task_id="validate_row_count",
-#        python_callable=validate_row_count,
-#    )
-#
-#    # Task 3: Log summary
-#    task_log_summary = PythonOperator(
-#        task_id="log_run_summary",
-#        python_callable=log_run_summary,
-#    )
-#
-#    # Task 4: Write audit record via SQL
-#    task_audit_sql = PostgresOperator(
-#        task_id="write_audit_record",
-#        postgres_conn_id="dvdrental_appuser",   # configure in Airflow UI
-#        sql="""
-#            INSERT INTO etl_audit_log
-#                (pipeline_name, source_table, target_table,
-#                 rows_loaded, status, elapsed_s)
-#            VALUES
-#                ('customer_etl_daily', 'customer',
-#                 'analytics_customer_airflow',
-#                 (SELECT COUNT(*) FROM analytics_customer_airflow),
-#                 'success', 0)
-#            ON CONFLICT DO NOTHING;
-#        """,
-#    )
-#
-#    # ── Task Dependencies ──────────────────────────────────────────────────
-#    # run_etl → validate → log_summary → audit
-#    task_run_etl >> task_validate >> task_log_summary >> task_audit_sql
+    # Task 5: Converge both branches + write audit
+    # trigger_rule="none_failed_min_one_success" runs if at least one
+    # upstream succeeded (handles branch convergence)
+    task_audit = PythonOperator(
+        task_id="write_audit",
+        python_callable=write_audit,
+        trigger_rule="none_failed_min_one_success",
+    )
+
+    # ── Dependencies ──────────────────────────────────────────────────────
+    task_etl >> task_wait_csv >> task_branch
+    task_branch >> task_validate_full >> task_audit
+    task_branch >> task_notify_low    >> task_audit

@@ -202,11 +202,10 @@ set AIRFLOW_HOME=C:\Users\Lenovo\python-de-journey\airflow
 
 # Install Airflow 2.8.1 with PostgreSQL + constraints
 # Constraints file pins all dependencies to known-working versions
-pip install apache-airflow==2.8.1 ^
-    --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.8.1/constraints-3.12.txt"
+pip install "apache-airflow==2.9.3" \
+    --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.9.3/constraints-3.12.txt"
 
-# Install PostgreSQL provider
-pip install apache-airflow-providers-postgres==5.10.0
+pip install "apache-airflow-providers-postgres==5.10.0"
 
 # Verify
 airflow version

@@ -5,13 +5,13 @@ from datetime import datetime   # ← Added this line
 
 # ── ROBUST PATH FIX ───────────────────────────────
 _here = Path(__file__).resolve().parent
-print("DEBUG: Script running from →", _here)
+# print("DEBUG: Script running from →", _here)
 
 sys.path.insert(0, str(_here))
 sys.path.insert(0, str(_here.parent / "day-04"))
 sys.path.insert(0, str(_here / "config"))
 
-print("DEBUG: sys.path[0..1] →", sys.path[:2])
+# print("DEBUG: sys.path[0..1] →", sys.path[:2])
 
 from jira import JIRA
 from logger import get_pipeline_logger

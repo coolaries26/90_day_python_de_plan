@@ -24,7 +24,7 @@ from venv import logger
 # ── PATH FIX FOR JIRA CLIENT (Day 06) ─────────────────────────────
 _here = Path(__file__).resolve().parent
 sys.path.insert(0, str(_here.parent / "sprint-01" / "day-06"))
-print("DEBUG: Added path for jira_client →", _here.parent / "sprint-01" / "day-06")     # for JiRA client import
+# print("DEBUG: Added path for jira_client →", _here.parent / "sprint-01" / "day-06")     # for JiRA client import
 from jira_client import create_or_update_daily_task
 import os
 from datetime import datetime

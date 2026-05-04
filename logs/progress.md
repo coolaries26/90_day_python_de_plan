@@ -45,3 +45,4 @@
 | 019 | S03 | 2026-04-29 02:33 | `b1582921` | `sprint-03/day-19-coverage` | Coverage: >=80pct on etl_resilient, original test_etl.py 3/3 fixed, HTML report generated |
 | 020 | S03 | 2026-05-01 03:14 | `badc7013` | `sprint-03/day-20-sprint-test` | Sprint 03 complete |
 | 021 | S04 | 2026-05-03 15:47 | `097e1b50` | `sprint-04/day-21-airflow-setup` | Airflow setup: PostgreSQL metadata DB, first DAG customer_etl_daily, all 4 tasks green |
+| 022 | S04 | 2026-05-04 03:08 | `5af0f346` | `sprint-04/day-22-your-topic` | Airflow: BranchPythonOperator, FileSensor, TaskGroup, dag_film_etl.py, dynamic Windows IP |

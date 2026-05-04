@@ -19,6 +19,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.sensors.filesystem import FileSensor
 from airflow.operators.empty import EmptyOperator
+from airflow.models import Variable
 
 # ── Dynamic Windows IP ────────────────────────────────────────────────────
 def _get_windows_ip() -> str:
@@ -62,7 +63,10 @@ def run_customer_etl(**context) -> int:
 
     config = ETLConfig(
         source_table="customer",
-        target_table="analytics_customer_airflow",
+        TARGET_TABLE = Variable.get(
+        "customer_etl_target_table",
+         default_var="analytics_customer_airflow"
+        ),
         max_retries=2,
         output_dir=OUTPUT_DIR,
     )

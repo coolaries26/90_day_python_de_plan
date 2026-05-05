@@ -20,6 +20,10 @@ from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.sensors.filesystem import FileSensor
 from airflow.operators.empty import EmptyOperator
 from airflow.models import Variable
+# from airflow_callbacks import on_failure, on_retry, on_success
+from datetime import timedelta
+from airflow_callbacks import on_failure, on_retry
+
 
 # ── Dynamic Windows IP ────────────────────────────────────────────────────
 def _get_windows_ip() -> str:
@@ -50,10 +54,13 @@ for p in [
     sys.path.insert(0, str(p))
 
 default_args = {
-    "owner":           "python-de-journey",
-    "retries":         2,
-    "retry_delay":     timedelta(minutes=1),
-    "depends_on_past": False,
+    "owner":              "python-de-journey",
+    "retries":            3,
+    "retry_delay":        timedelta(minutes=1),
+    "retry_exponential_backoff": True,   # ← exponential backoff
+    "max_retry_delay":    timedelta(minutes=10),  # ← cap at 10 min
+    "on_failure_callback": on_failure,
+    "on_retry_callback":   on_retry,
 }
 
 # ── Task functions ────────────────────────────────────────────────────────
@@ -63,10 +70,10 @@ def run_customer_etl(**context) -> int:
 
     config = ETLConfig(
         source_table="customer",
-        TARGET_TABLE = Variable.get(
-        "customer_etl_target_table",
-         default_var="analytics_customer_airflow"
-        ),
+        target_table = Variable.get(
+            "customer_etl_target_table",
+             default_var="analytics_customer_airflow"
+            ),
         max_retries=2,
         output_dir=OUTPUT_DIR,
     )
@@ -135,6 +142,7 @@ with DAG(
     task_etl = PythonOperator(
         task_id="run_customer_etl",
         python_callable=run_customer_etl,
+        sla=timedelta(minutes=5),   # ← must complete in 5 min
     )
 
     # Task 2: Wait for CSV file to exist before branching

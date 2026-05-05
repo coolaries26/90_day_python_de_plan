@@ -107,7 +107,7 @@ class Rental(Base):
     # YOUR CODE HERE
     rental_id:        Mapped[int]            = mapped_column(Integer, primary_key=True)
     rental_date:      Mapped[datetime]       = mapped_column(DateTime, nullable=False)
-#    inventory_id:     Mapped[Integer]        = mapped_column(Integer, ForeignKey("inventory.inventory_id"), nullable=False)
+    inventory_id:     Mapped[Integer]        = mapped_column(Integer, ForeignKey("inventory.inventory_id"), nullable=False)
     customer_id:      Mapped[Integer]        = mapped_column(Integer, ForeignKey("customer.customer_id"), nullable=False)
     return_date:      Mapped[datetime | None] = mapped_column(DateTime)
     staff_id:         Mapped[int]            = mapped_column(Integer, nullable=False)

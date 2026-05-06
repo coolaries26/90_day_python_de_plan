@@ -47,3 +47,4 @@
 | 021 | S04 | 2026-05-03 15:47 | `097e1b50` | `sprint-04/day-21-airflow-setup` | Airflow setup: PostgreSQL metadata DB, first DAG customer_etl_daily, all 4 tasks green |
 | 022 | S04 | 2026-05-04 03:08 | `5af0f346` | `sprint-04/day-22-your-topic` | Airflow: BranchPythonOperator, FileSensor, TaskGroup, dag_film_etl.py, dynamic Windows IP |
 | 023 | S04 | 2026-05-05 00:31 | `289af126` | `sprint-04/day-23-xcom-variables` | Airflow XCom+Variables: pipeline config in Variables, audit report DAG, 3 connections |
+| 024 | S04 | 2026-05-06 02:23 | `a3407fde` | `sprint-04/day-24-retry-sla-alerts` | Airflow: exponential backoff, SLA, on_failure callback verified, failure_test DAG, models_compat.py for SQLAlchemy 1.4 |

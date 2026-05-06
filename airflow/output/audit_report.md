@@ -1,14 +1,14 @@
 # Audit Report
 
-**Report generated at:** 2026-05-05 18:27:30.086631
+**Report generated at:** 2026-05-06 18:16:24.900494
 
 ## Summary
-- Total Runs: 7
+- Total Runs: 10
 - Successful: 7
-- Failed: 0
+- Failed: 3
 - Total Rows Loaded: 31592
-- Pipelines: customer_etl_daily, TimeSeriesAnalysis, WindowAnalysis, DemoETL
-- Latest Run: 2026-05-04 00:11:58.051970
+- Pipelines: failure_test.always_fails, test_callback, customer_etl_daily, TimeSeriesAnalysis, WindowAnalysis, DemoETL
+- Latest Run: 2026-05-06 02:17:51.482623
 
 ## Pipeline Count Checks
 - **customer**: 599 rows (min 500) ✅ PASS

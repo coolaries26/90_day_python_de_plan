@@ -130,6 +130,7 @@ def write_audit(**context) -> None:
 # ── DAG ───────────────────────────────────────────────────────────────────
 with DAG(
     dag_id="customer_etl_daily",
+    max_active_runs=1,  # ← prevent overlapping runs
     description="Daily customer ETL — with branching and sensor",
     default_args=default_args,
     schedule="@daily",
@@ -142,6 +143,9 @@ with DAG(
     task_etl = PythonOperator(
         task_id="run_customer_etl",
         python_callable=run_customer_etl,
+        pool="etl_pool",
+        priority_weight=10,          # ← highest priority
+        weight_rule="absolute",
         sla=timedelta(minutes=5),   # ← must complete in 5 min
     )
 

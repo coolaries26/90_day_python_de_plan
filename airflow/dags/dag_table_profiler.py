@@ -152,6 +152,8 @@ def summarise_profiles(**context) -> None:
             task_ids=f"profile_{table}",
             key=f"profile_{table}"
         )
+        pool="db_connection_pool",  # ← max 3 run simultaneously
+        pool_slots=2,
         if profile:
             profiles.append(profile)
             passed = sum(1 for p in profiles if p["passed"])
@@ -181,7 +183,8 @@ with DAG(
     start_date=datetime(2026, 1, 1),
     catchup=False,
     tags=["profiling", "dynamic", "sprint-04"],
-    max_active_tasks=4,   # run max 4 profile tasks in parallel
+    max_active_tasks=4,         # run max 4 profile tasks in parallel
+    max_active_runs=1,          # ← prevent overlapping runs
 ) as dag:
 
     # ── Dynamic task generation ───────────────────────────────────────────
@@ -196,6 +199,8 @@ with DAG(
                 "min_rows": cfg["min_rows"],
                 "key_col":  cfg["key_col"],
             },
+            pool="db_connection_pool",  # ← max 3 run simultaneously
+            pool_slots=2,
         )
         profile_tasks.append(task)
 

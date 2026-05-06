@@ -161,6 +161,9 @@ with DAG(
         task_film_etl = PythonOperator(
             task_id="run_film_etl",
             python_callable=run_film_etl,
+            pool="etl_pool",
+            priority_weight=5,           # ← medium priority
+            weight_rule="absolute",
         )
 
     # TaskGroup 2: Validation

@@ -39,6 +39,8 @@ default_args = {
     "owner": "python-de-journey",
     "retries": 1,
     "retry_delay": timedelta(minutes=1),
+    "priority_weight": 1,            # ← lowest priority
+    "weight_rule": "absolute",
 }
 
 

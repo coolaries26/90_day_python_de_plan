@@ -48,3 +48,4 @@
 | 022 | S04 | 2026-05-04 03:08 | `5af0f346` | `sprint-04/day-22-your-topic` | Airflow: BranchPythonOperator, FileSensor, TaskGroup, dag_film_etl.py, dynamic Windows IP |
 | 023 | S04 | 2026-05-05 00:31 | `289af126` | `sprint-04/day-23-xcom-variables` | Airflow XCom+Variables: pipeline config in Variables, audit report DAG, 3 connections |
 | 024 | S04 | 2026-05-06 02:23 | `a3407fde` | `sprint-04/day-24-retry-sla-alerts` | Airflow: exponential backoff, SLA, on_failure callback verified, failure_test DAG, models_compat.py for SQLAlchemy 1.4 |
+| 025 | S04 | 2026-05-07 00:04 | `f9b96129` | `sprint-04/day-25-backfill-dynamic-dags` | Airflow: backfill 3 dates, dynamic DAG 8 tables, TaskFlow API audit report |

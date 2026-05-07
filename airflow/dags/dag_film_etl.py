@@ -22,6 +22,11 @@ from pathlib import Path
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.task_group import TaskGroup
+from airflow import Dataset
+
+FILM_DATASET = Dataset(
+    "postgresql://dvdrental/analytics_film_airflow"
+)
 
 # ── Dynamic Windows IP ────────────────────────────────────────────────────
 def _get_windows_ip() -> str:
@@ -161,6 +166,7 @@ with DAG(
         task_film_etl = PythonOperator(
             task_id="run_film_etl",
             python_callable=run_film_etl,
+            outlets=[FILM_DATASET],        # ← signals dataset was updated
             pool="etl_pool",
             priority_weight=5,           # ← medium priority
             weight_rule="absolute",

@@ -12,6 +12,16 @@ import subprocess
 from datetime import datetime, timedelta
 from pathlib import Path
 
+from airflow import Dataset
+
+# Define the datasets this DAG consumes:
+CUSTOMER_DATASET = Dataset(
+    "postgresql://dvdrental/analytics_customer_airflow"
+)
+FILM_DATASET = Dataset(
+    "postgresql://dvdrental/analytics_film_airflow"
+)
+
 _ip = subprocess.run(
     ["bash", "-c", "ip route | grep default | awk '{print $3}'"],
     capture_output=True, text=True,
@@ -103,7 +113,8 @@ def write_report(summary: dict, counts: dict) -> str:
 @dag(
     dag_id="audit_report_taskflow",
     description="Audit report using TaskFlow API",
-    schedule="@daily",
+    schedule=[CUSTOMER_DATASET, FILM_DATASET],  # ← event-driven
+#    schedule="@daily",
     start_date=datetime(2026, 1, 1),
     catchup=False,
     tags=["audit", "taskflow", "sprint-04"],

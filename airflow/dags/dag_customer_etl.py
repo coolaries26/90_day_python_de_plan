@@ -23,7 +23,13 @@ from airflow.models import Variable
 # from airflow_callbacks import on_failure, on_retry, on_success
 from datetime import timedelta
 from airflow_callbacks import on_failure, on_retry
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
+from airflow import Dataset
 
+# Define dataset
+CUSTOMER_DATASET = Dataset(
+    "postgresql://dvdrental/analytics_customer_airflow"
+)
 
 # ── Dynamic Windows IP ────────────────────────────────────────────────────
 def _get_windows_ip() -> str:
@@ -143,6 +149,7 @@ with DAG(
     task_etl = PythonOperator(
         task_id="run_customer_etl",
         python_callable=run_customer_etl,
+        outlets=[CUSTOMER_DATASET],    # ← signals dataset was updated
         pool="etl_pool",
         priority_weight=10,          # ← highest priority
         weight_rule="absolute",
@@ -175,6 +182,17 @@ with DAG(
     task_notify_low = PythonOperator(
         task_id="notify_low_count",
         python_callable=notify_low_count,
+    )
+
+    task_trigger_audit = TriggerDagRunOperator(
+    task_id="trigger_audit_report",
+    trigger_dag_id="pipeline_audit_report",
+    wait_for_completion=False,    # don't block customer ETL waiting for audit
+    reset_dag_run=True,           # reset if already running
+    conf={
+        "triggered_by": "customer_etl_daily",
+        "trigger_time": "{{ ts }}",   # Jinja template for execution timestamp
+    },
     )
 
     # Task 5: Converge both branches + write audit

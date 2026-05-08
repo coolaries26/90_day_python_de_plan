@@ -21,6 +21,10 @@ CUSTOMER_DATASET = Dataset(
 FILM_DATASET = Dataset(
     "postgresql://dvdrental/analytics_film_airflow"
 )
+RENTAL_DATASET = Dataset(
+    "postgresql://dvdrental/analytics_rental_airflow"
+)
+
 
 _ip = subprocess.run(
     ["bash", "-c", "ip route | grep default | awk '{print $3}'"],
@@ -113,7 +117,7 @@ def write_report(summary: dict, counts: dict) -> str:
 @dag(
     dag_id="audit_report_taskflow",
     description="Audit report using TaskFlow API",
-    schedule=[CUSTOMER_DATASET, FILM_DATASET],  # ← event-driven
+    schedule=[CUSTOMER_DATASET, FILM_DATASET, RENTAL_DATASET],  # ← event-driven
 #    schedule="@daily",
     start_date=datetime(2026, 1, 1),
     catchup=False,

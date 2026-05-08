@@ -206,5 +206,5 @@ with DAG(
 
     # ── Dependencies ──────────────────────────────────────────────────────
     task_etl >> task_wait_csv >> task_branch
-    task_branch >> task_validate_full >> task_audit
+    task_branch >> task_validate_full >> task_trigger_audit >> task_audit
     task_branch >> task_notify_low    >> task_audit

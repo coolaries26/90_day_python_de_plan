@@ -52,3 +52,4 @@
 | 026 | S04 | 2026-05-07 01:32 | `22d5b0b9` | `sprint-04/day-26-pools-priorities` | Airflow: db_connection_pool, etl_pool, priority weights, max_active_runs=1, priority_demo DAG |
 | 027 | S04 | 2026-05-08 00:12 | `200c55e5` | `sprint-04/day-27-dataset-triggers` | Airflow: Dataset outlets on ETL DAGs, audit_report dataset schedule, TriggerDagRunOperator |
 | 028 | S04 | 2026-05-09 03:29 | `c57ab102` | `sprint-04/day-28-sprint-test` | Sprint 04 complete |
+| 029 | S05 | 2026-05-09 13:49 | `02217eea` | `sprint-05/day-29-visualization` | Visualization: 5 charts from PostgreSQL, matplotlib+seaborn, chart_utils module |

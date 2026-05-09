@@ -77,6 +77,12 @@ def on_failure(context: dict) -> None:
     Called when a task fails after all retries are exhausted.
     Logs failure record to etl_audit_log.
     """
+# Fix : on_failure_callback — open airflow_callbacks.py in WSL2
+# Add guard at top of on_failure():
+    ti = context["task_instance"]
+    if ti.try_number - 1 < ti.max_tries:
+        return   # not final failure
+
     dag_id   = context["dag"].dag_id
     task_id  = context["task_instance"].task_id
     run_id   = context.get("run_id", "unknown")

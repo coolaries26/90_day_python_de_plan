@@ -251,7 +251,7 @@ def merge_to_main(repo: Repo, source_branch: str) -> bool:
         repo.git.tag("-f", tag_name)          # -f forces overwrite if tag exists
         origin.push(tags=True)
 
-        log.info("✅ Merged and pushed main + tag '%s'", tag_name)
+        log.info("✅ Merged and pushed main + tag '{tag_name}'")
 
         # Return to develop
         repo.git.checkout("develop")

@@ -53,3 +53,4 @@
 | 027 | S04 | 2026-05-08 00:12 | `200c55e5` | `sprint-04/day-27-dataset-triggers` | Airflow: Dataset outlets on ETL DAGs, audit_report dataset schedule, TriggerDagRunOperator |
 | 028 | S04 | 2026-05-09 03:29 | `c57ab102` | `sprint-04/day-28-sprint-test` | Sprint 04 complete |
 | 029 | S05 | 2026-05-09 13:49 | `02217eea` | `sprint-05/day-29-visualization` | Visualization: 5 charts from PostgreSQL, matplotlib+seaborn, chart_utils module |
+| 030 | S05 | 2026-05-10 01:44 | `cc830931` | `sprint-05/day-30-plotly` | Plotly: 4 interactive charts HTML+PNG, 4-panel subplot dashboard |

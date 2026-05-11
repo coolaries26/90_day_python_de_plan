@@ -40,7 +40,7 @@ def load_customers() -> pd.DataFrame:
 def load_films() -> pd.DataFrame:
     """Load film analytics table."""
     return pd.read_sql(
-        "SELECT * FROM analytics_film_airflow ORDER BY value_tier DESC",
+        " select a.rental_count,a.value_score,b.* from analytics_film_value_score a join analytics_film_airflow b on a.film_id=b.film_id ORDER BY value_tier DESC",
         _engine()
     )
 

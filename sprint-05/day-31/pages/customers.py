@@ -67,7 +67,7 @@ def render():
             options=["Bronze", "Silver", "Gold", "Platinum"],
             default=["Bronze", "Silver", "Gold", "Platinum"]
         )
-        min_spend = st.slider("Min Spend ($)", 0, 250, 0)
+        min_spend = st.select_slider("Min Spend ($)", options=range(0, 251), value=0)
     
     filtered = load_customers()[
         (load_customers()["value_segment"].isin(segments)) &

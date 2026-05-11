@@ -4,6 +4,11 @@ import pandas as pd
 import plotly.graph_objects as go
 import sys
 from pathlib import Path
+# Add this import at top:
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+from db import load_monthly_revenue
+
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from db import get_summary_kpis, load_pipeline_status
@@ -31,6 +36,41 @@ def render():
                 delta=f"-{kpis['failed_runs']}" if kpis["failed_runs"] else "0",
                 delta_color="inverse")
 
+
+    # Add after the gauge chart section:
+    # ── Monthly Revenue Trend from day-32 ────────────────────────────────────────
+    st.markdown("---")
+    st.subheader("Monthly Revenue Trend")
+    
+    monthly = load_monthly_revenue()
+    monthly["payment_date"] = pd.to_datetime(monthly["payment_date"])
+    monthly["month"] = monthly["payment_date"].dt.strftime("%b %Y")
+    
+    fig_rev = make_subplots(specs=[[{"secondary_y": True}]])
+    fig_rev.add_trace(
+        go.Bar(x=monthly["month"], y=monthly["total_revenue"],
+               name="Revenue ($)", marker_color="steelblue", opacity=0.8),
+        secondary_y=False,
+    )
+    valid = monthly["mom_growth_pct"].notna()
+    fig_rev.add_trace(
+        go.Scatter(
+            x=monthly.loc[valid, "month"],
+            y=monthly.loc[valid, "mom_growth_pct"],
+            name="MoM Growth (%)", mode="lines+markers",
+            line=dict(color="tomato", width=2),
+        ),
+        secondary_y=True,
+    )
+    fig_rev.update_layout(
+        title="Monthly Revenue + MoM Growth",
+        template="plotly_dark",
+        hovermode="x unified",
+        height=350,
+    )
+    fig_rev.update_yaxes(title_text="Revenue ($)", secondary_y=False)
+    fig_rev.update_yaxes(title_text="MoM Growth (%)", secondary_y=True)
+    st.plotly_chart(fig_rev, use_container_width=True)
     # ── Pipeline Status Table ──────────────────────────────────────────────
     st.markdown("---")
     st.subheader("Recent Pipeline Runs")
@@ -44,7 +84,7 @@ def render():
         return f"color: {c}; font-weight: bold"
 
     st.dataframe(
-        pipeline_df.style.applymap(colour_status, subset=["status"]),
+        pipeline_df.style.map(colour_status, subset=["status"]),
         use_container_width=True,
         height=350,
     )

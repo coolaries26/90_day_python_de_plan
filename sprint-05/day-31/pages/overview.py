@@ -71,6 +71,26 @@ def render():
     fig_rev.update_yaxes(title_text="Revenue ($)", secondary_y=False)
     fig_rev.update_yaxes(title_text="MoM Growth (%)", secondary_y=True)
     st.plotly_chart(fig_rev, use_container_width=True)
+# Add at bottom of each page, ABOVE the download button:
+    with st.expander("📋 View Raw Data", expanded=False):
+        st.caption(f"{len(monthly):,} rows × {len(monthly.columns)} columns")
+        st.dataframe(monthly, use_container_width=True, height=300)
+
+# ── CSV Export ────────────────────────────────────────────────────────────
+#    st.markdown("---")
+    col_dl, col_info = st.columns([1, 3])
+    with col_dl:
+        csv_bytes = monthly.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            label="⬇️ Download as CSV",
+            data=csv_bytes,
+            file_name=f"monthly_revenue_{pd.Timestamp.now().strftime('%Y%m%d_%H%M')}.csv",
+            mime="text/csv",
+            use_container_width=True,
+        )
+    with col_info:
+        st.caption(f"Downloading {len(monthly):,} rows × {len(monthly.columns)} columns")
+
     # ── Pipeline Status Table ──────────────────────────────────────────────
     st.markdown("---")
     st.subheader("Recent Pipeline Runs")
@@ -82,12 +102,27 @@ def render():
         colour = {"success": "green", "failed": "red", "sla_miss": "orange"}
         c = colour.get(val, "grey")
         return f"color: {c}; font-weight: bold"
-
     st.dataframe(
         pipeline_df.style.map(colour_status, subset=["status"]),
         use_container_width=True,
         height=350,
     )
+# Add at bottom of each page, ABOVE the download button:
+    with st.expander("📋 View Raw Data", expanded=False):
+        st.caption(f"{len(pipeline_df):,} rows × {len(pipeline_df.columns)} columns")
+        st.dataframe(pipeline_df, use_container_width=True, height=300)
+    col_dl, col_info = st.columns([1, 3])
+    with col_dl:
+        csv_bytes = pipeline_df.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            label="⬇️ Download as CSV",
+            data=csv_bytes,
+            file_name=f"pipeline_{pd.Timestamp.now().strftime('%Y%m%d_%H%M')}.csv",
+            mime="text/csv",
+            use_container_width=True,
+        )
+    with col_info:
+        st.caption(f"Downloading {len(pipeline_df):,} rows × {len(pipeline_df.columns)} columns")
 
     # ── Pipeline Success Rate Gauge ────────────────────────────────────────
     st.markdown("---")
@@ -116,3 +151,5 @@ def render():
     ))
     fig.update_layout(height=300)
     st.plotly_chart(fig, use_container_width=True)
+    st.markdown("---")
+    st.caption("Success rate is calculated as (Successful Runs / Total Runs) × 100%.")

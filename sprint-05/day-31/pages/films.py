@@ -72,23 +72,39 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 from db import load_films
+import pandas as pd
 
 def render():
     st.title("🎬 Film Analytics")
     st.markdown("---")
     df = load_films()
+    # In sidebar, BEFORE the tier multiselect:
     with st.sidebar:
         st.markdown("---")
+        search = st.text_input("🔍 Search by Title", placeholder="e.g. academy")
+
         tiers   = st.multiselect("Value Tier", ["Budget","Standard","Premium"],
                                  default=["Budget","Standard","Premium"])
         ratings = st.multiselect("Rating", ["G","PG","PG-13","R","NC-17"],
                                  default=["G","PG","PG-13","R","NC-17"])
         min_score = st.slider("Min Value Score", 0.0, 100.0, 0.0, step=1.0)
-    filtered = df[
-        (df["value_tier"].isin(tiers)) &
-        (df["rating"].isin(ratings)) &
-        (df["value_score"] >= float(min_score))
+    
+    # Apply search filter FIRST, then other filters:
+    filtered = df.copy()
+    if search:
+        filtered = filtered[
+            filtered["title"].str.contains(search, case=False, na=False)
+        ]
+    filtered = filtered[
+        (filtered["value_tier"].isin(tiers)) &
+        (filtered["rating"].isin(ratings)) &
+        (filtered["value_score"] >= min_score)
     ]
+
+    # Show search result count
+    if search:
+        st.caption(f"🔍 '{search}' matched {len(filtered)} films")
+
 #     filtered = df.query(
 #         "value_tier in @tiers and "
 #         "rating in @ratings and "
@@ -114,9 +130,28 @@ def render():
                       title="Rental Rate by Rating")
         st.plotly_chart(fig2, use_container_width=True)
     # Top 20 films table
-    top_films = (filtered.sort_values("value_tier", ascending=False)
-                 .head(20))
-    st.dataframe(top_films, use_container_width=True)
+#    top_films = (filtered.sort_values("value_tier", ascending=False)
+#                 .head(20))
+#    st.dataframe(top_films, use_container_width=True)
+#    st.markdown("---")
+#    st.subheader("*Note: 'full_name' column may not be available if not included in the analytics table.*")
     st.markdown("---")
-    st.subheader("*Note: 'full_name' column may not be available if not included in the analytics table.*")
-    st.markdown("---")  
+# Add at bottom of each page, ABOVE the download button:
+    with st.expander("📋 View Raw Data", expanded=False):
+        st.caption(f"{len(filtered):,} rows × {len(filtered.columns)} columns")
+        st.dataframe(filtered, use_container_width=True, height=300)
+
+# ── CSV Export ────────────────────────────────────────────────────────────
+    st.markdown("---")
+    col_dl, col_info = st.columns([1, 3])
+    with col_dl:
+        csv_bytes = filtered.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            label="⬇️ Download CSV",
+            data=csv_bytes,
+            file_name=f"customers_filtered_{pd.Timestamp.now().strftime('%Y%m%d_%H%M')}.csv",
+            mime="text/csv",
+            use_container_width=True,
+        )
+    with col_info:
+        st.caption(f"Downloading {len(filtered):,} rows × {len(filtered.columns)} columns")    

@@ -56,3 +56,4 @@
 | 030 | S05 | 2026-05-10 01:44 | `cc830931` | `sprint-05/day-30-plotly` | Plotly: 4 interactive charts HTML+PNG, 4-panel subplot dashboard |
 | 031 | S05 | 2026-05-11 00:33 | `c2d1af62` | `sprint-05/day-31-streamlit` | Streamlit: app skeleton, db.py cached queries, overview KPIs, customer page with filters |
 | 032 | S05 | 2026-05-12 00:35 | `706b9b82` | `sprint-05/day-32-streamlit-films` | Streamlit: films page with filters, revenue chart on overview, refresh button, components.py |
+| 033 | S05 | 2026-05-14 01:12 | `66369840` | `sprint-05/day-33-dashboard-polish` | Dashboard polish: CSV download, title search, raw data expander, README, run_dashboard.bat |

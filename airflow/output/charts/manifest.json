@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-05-14T18:55:17.412437",
+  "static_charts": [
+    "/mnt/c/90_day_python_de_plan/airflow/output/charts/static/c1_customer_segments.png",
+    "/mnt/c/90_day_python_de_plan/airflow/output/charts/static/c2_monthly_revenue.png",
+    "/mnt/c/90_day_python_de_plan/airflow/output/charts/static/c3_film_value_tiers.png",
+    "/mnt/c/90_day_python_de_plan/airflow/output/charts/static/c4_pipeline_history.png",
+    "/mnt/c/90_day_python_de_plan/airflow/output/charts/static/c5_customer_spend_dist.png"
+  ],
+  "interactive_charts": [
+    "p1_customer_segments",
+    "p2_monthly_revenue",
+    "p4_category_treemap"
+  ],
+  "total_charts": 8,
+  "chart_output_dir": "/mnt/c/90_day_python_de_plan/airflow/output/charts"
+}

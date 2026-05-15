@@ -58,3 +58,4 @@
 | 032 | S05 | 2026-05-12 00:35 | `706b9b82` | `sprint-05/day-32-streamlit-films` | Streamlit: films page with filters, revenue chart on overview, refresh button, components.py |
 | 033 | S05 | 2026-05-14 01:12 | `66369840` | `sprint-05/day-33-dashboard-polish` | Dashboard polish: CSV download, title search, raw data expander, README, run_dashboard.bat |
 | 034 | S05 | 2026-05-15 00:33 | `8ce3f8e8` | `sprint-05/day-34-chart-dag` | Airflow chart DAG: dataset trigger, static+interactive charts, manifest JSON, CHART_DATASET outlet |
+| 035 | S05 | 2026-05-16 02:38 | `9d0563eb` | `sprint-05/day-35-sprint-test` | Sprint 05 test: rental chart, rentals page, chart DAG +1, filled area Plotly |

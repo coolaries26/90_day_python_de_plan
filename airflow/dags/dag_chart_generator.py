@@ -29,11 +29,12 @@ PROJECT_ROOT = Path("/mnt/c/90_day_python_de_plan")
 
 # Add all required paths
 for p in [
-    PROJECT_ROOT / "sprint-01" / "day-02",
-    PROJECT_ROOT / "sprint-01" / "day-04",
-    PROJECT_ROOT / "sprint-05" / "day-29",
-    PROJECT_ROOT / "sprint-05" / "day-30",
-    PROJECT_ROOT / "sprint-03" / "day-16",
+    PROJECT_ROOT / "sprint-01" / "day-02", # for db_utils and get_engine
+    PROJECT_ROOT / "sprint-01" / "day-04", # for models_compat and AuditLog
+    PROJECT_ROOT / "sprint-05" / "day-29", # for static charts
+    PROJECT_ROOT / "sprint-05" / "day-30", # for interactive charts
+    PROJECT_ROOT / "sprint-03" / "day-16", # for Dataset and airflow callbacks
+    PROJECT_ROOT / "sprint-05" / "day-35", # for test_charts and rental timeline chart function
 ]:
     sys.path.insert(0, str(p))
 
@@ -69,9 +70,12 @@ def generate_static_charts(**context) -> dict:
 
     # Override OUTPUT_DIR in charts module
     import charts as charts_module
+    import test_charts as test_module
     static_dir = CHART_OUTPUT / "static"
     static_dir.mkdir(exist_ok=True)
     charts_module.OUTPUT_DIR = static_dir
+    test_module.OUTPUT_DIR = static_dir
+
 
     generated = []
     chart_functions = [
@@ -80,6 +84,7 @@ def generate_static_charts(**context) -> dict:
         charts_module.chart_film_value_tiers,
         charts_module.chart_pipeline_history,
         charts_module.chart_customer_spend_distribution,
+        test_module.chart_rental_timeline,   # from day 35 test_charts.py — bonus!
     ]
 
     for fn in chart_functions:

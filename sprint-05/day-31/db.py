@@ -90,3 +90,24 @@ def get_summary_kpis() -> dict[str, Any]:
         "platinum_customers":int((customers["value_segment"] == "Platinum").sum())
             if "value_segment" in customers.columns else 0,
     }
+
+@st.cache_data(ttl=300)
+def load_rental_stats() -> pd.DataFrame:
+    """Load weekly rental stats for rentals page."""
+    
+    result = pd.read_sql(
+        """SELECT DATE_TRUNC('week', rental_date)::date AS week_start,
+                  COUNT(*) AS rental_count,
+                  COUNT(CASE WHEN return_date IS NULL THEN 1 END) AS still_open
+           FROM rental
+           -- where rental_date <= '2005-12-31' 
+           GROUP BY DATE_TRUNC('week', rental_date)
+           ORDER BY week_start desc""",
+        _engine()
+    )
+    unique_customers = pd.read_sql(
+        """SELECT count(distinct customer_id) FROM rental""",
+        _engine()
+    )
+    result=result.assign(unique_customers=unique_customers.iloc[0, 0])
+    return result

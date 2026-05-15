@@ -1,0 +1,10 @@
+# ── Sprint 09: Airflow (install separately — heavy) ──────────────────────────
+apache-airflow==2.9.3
+apache-airflow-providers-postgres==5.10.0
+
+# ── Sprint 10: Visualization (uncomment at Day 64) ───────────────────────────
+matplotlib==3.8.2
+seaborn==0.13.0
+plotly==5.18.0
+streamlit==1.29.0
+kaleido==0.2.1

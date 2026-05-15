@@ -23,7 +23,7 @@ with st.sidebar:
     st.markdown("---")
     page = st.radio(
         "Navigate to:",
-        options=["📊 Overview", "👥 Customers", "🎬 Films"],
+        options=["📊 Overview", "👥 Customers", "🎬 Films", "📅 Rentals"],
         index=0,
     )
     st.markdown("---")
@@ -51,5 +51,8 @@ elif page == "🎬 Films":
 #    st.title("🎬 Films")
     import pages.films as films
     films.render()
+elif page == "📅 Rentals":
+    import pages.rentals as rentals
+    rentals.render()    
 else:
     st.info("Films page coming on Day 32")

@@ -234,65 +234,38 @@ def merge_to_main(repo: Repo, source_branch: str) -> bool:
     """
     try:
         log.info("Merging develop → main")
-
-        # Checkout main and pull latest
         repo.git.checkout("main")
         repo.git.pull("origin", "main")
-
-        # Merge develop into main
         repo.git.merge("develop", "--no-edit")
 
-        # Push main
         origin = repo.remote("origin")
         origin.push()
 
-        # Create sprint tag
-        tag_name = "sprint-01-complete"
-        repo.git.tag("-f", tag_name)          # -f forces overwrite if tag exists
+        # ── FIX: derive sprint number from source branch name ──────────
+        # source_branch format: sprint-04/day-28-sprint-test
+        # Extract sprint number dynamically
+        import re
+        match = re.search(r"sprint-(\d+)", source_branch)
+        sprint_num = int(match.group(1)) if match else 0
+        tag_name = f"sprint-{sprint_num:02d}-complete"   # ← dynamic
+
+        repo.git.tag("-f", tag_name)
         origin.push(tags=True)
+        log.info(f"✅ Merged and pushed main + tag '{tag_name}'")   # ← f-string
 
-        log.info("✅ Merged and pushed main + tag '{tag_name}'")
-
-        # Return to develop
         repo.git.checkout("develop")
         log.info("Returned to develop")
         return True
 
     except GitCommandError as exc:
-        log.error("Merge to main failed | %s", str(exc)[:200])
-        try:
-            repo.git.checkout("develop")
-        except Exception:
-            pass
-        return False
-
-        log.info(f"Merging develop → main")
-
-        repo.git.checkout("main")
-        repo.git.pull("origin", "main")
-        repo.git.merge("develop", "--no-edit")
-        repo.git.tag("sprint-01-complete")
-        repo.git.push(tags=True)
-
-        origin = repo.remote("origin")
-        origin.push("develop")
-
-        log.info("Merged and pushed main ✅")
-
-        # Return to original branch
-        repo.git.checkout("develop")
-        log.info(f"Returned to develop")
-        return True
-
-    except GitCommandError as exc:
-        log.error("Merge failed | {}", str(exc)[:200])
+        log.error(f"Merge failed | {str(exc)[:200]}")
         log.warning("Resolve conflicts manually, then re-run without --merge")
         try:
             repo.git.checkout(source_branch)
         except Exception:
             pass
         return False
-
+    
 def main():
     parser = argparse.ArgumentParser(
         description="Daily git commit + push + optional merge",
@@ -325,7 +298,7 @@ def main():
         try:
             merge_to_main(repo, branch)
         except NotImplementedError as exc:
-            log.warning("merge_to_main not implemented yet: {}", exc)
+            log.warning("merge_to_main not implemented yet: %s", exc)
 
             # === JIRA AUTOMATION (Day 06) ===
 # In daily_commit.py main(), replace the JIRA block with:

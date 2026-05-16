@@ -5,7 +5,6 @@ import plotly.graph_objects as go
 import sys
 from pathlib import Path
 # Add this import at top:
-import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from db import load_monthly_revenue
 

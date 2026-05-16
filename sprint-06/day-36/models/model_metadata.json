@@ -1,0 +1,18 @@
+{
+  "model_type": "LogisticRegression",
+  "feature_names": [
+    "total_rentals",
+    "total_spend",
+    "days_since_last_payment",
+    "avg_spend_per_rental",
+    "log_total_spend",
+    "log_total_rentals",
+    "segment_encoded",
+    "is_high_value",
+    "is_recent"
+  ],
+  "n_features": 9,
+  "trained_at": "2026-05-16T23:45:10.919496",
+  "model_file": "churn_model.pkl",
+  "scaler_file": "churn_scaler.pkl"
+}

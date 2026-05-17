@@ -59,3 +59,4 @@
 | 033 | S05 | 2026-05-14 01:12 | `66369840` | `sprint-05/day-33-dashboard-polish` | Dashboard polish: CSV download, title search, raw data expander, README, run_dashboard.bat |
 | 034 | S05 | 2026-05-15 00:33 | `8ce3f8e8` | `sprint-05/day-34-chart-dag` | Airflow chart DAG: dataset trigger, static+interactive charts, manifest JSON, CHART_DATASET outlet |
 | 035 | S05 | 2026-05-16 02:40 | `a8c2f1af` | `sprint-05/day-35-sprint-test` | Sprint 05 complete |
+| 036 | S06 | 2026-05-17 00:27 | `97cf56f2` | `sprint-06/day-36-ml-foundations` | ML foundations: feature engineering, LogisticRegression churn model, joblib save, predict.py |

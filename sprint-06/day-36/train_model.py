@@ -25,7 +25,7 @@ from sklearn.metrics import (
 )
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "sprint-01" / "day-04")) # for logger
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent))    # for feature_engineering (same directory)
 
 from logger import get_pipeline_logger
 from feature_engineering import main as get_features

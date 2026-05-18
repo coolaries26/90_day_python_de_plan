@@ -60,3 +60,4 @@
 | 034 | S05 | 2026-05-15 00:33 | `8ce3f8e8` | `sprint-05/day-34-chart-dag` | Airflow chart DAG: dataset trigger, static+interactive charts, manifest JSON, CHART_DATASET outlet |
 | 035 | S05 | 2026-05-16 02:40 | `a8c2f1af` | `sprint-05/day-35-sprint-test` | Sprint 05 complete |
 | 036 | S06 | 2026-05-17 00:27 | `97cf56f2` | `sprint-06/day-36-ml-foundations` | ML foundations: feature engineering, LogisticRegression churn model, joblib save, predict.py |
+| 037 | S06 | 2026-05-18 00:51 | `9a4eef49` | `sprint-06/day-37-random-forest` | RandomForest GridSearchCV, model comparison, churn risk Streamlit page |

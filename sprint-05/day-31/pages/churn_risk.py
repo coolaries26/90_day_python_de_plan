@@ -60,14 +60,35 @@ sys.path.insert(0, str(_root.parent / "sprint-05" / "day-31"))
 sys.path.insert(0, str(_root.parent / "sprint-01" / "day-04"))
 sys.path.insert(0, str(_root.parent / "sprint-06" / "day-37"))
 
-from db import load_customers
+from db import load_customers, _engine
 from random_forest import train_random_forest
 from logger import get_pipeline_logger
 logger = get_pipeline_logger(__name__)
 
+# HINTS:
+
 def render():
     st.title("⚠️ Churn Risk")
     st.markdown("---")
+# Load drift log from DB:
+    try:
+        drift_df = pd.read_sql(
+            "SELECT * FROM ml_drift_log ORDER BY checked_at DESC LIMIT 5",
+            _engine()
+        )
+    except Exception:
+        drift_df = pd.DataFrame()
+# Show alert banner if drift detected:
+    if not drift_df.empty:
+        latest = drift_df.iloc[0]
+        if latest["status"] == "drift":
+            st.error(f"🚨 MODEL DRIFT DETECTED: {latest['message']}")
+        elif latest["status"] == "warning":
+            st.warning(f"⚠️ Accuracy declining: {latest['message']}")
+        else:
+            st.success("✅ Model performing normally")
+    else:
+        st.info("No drift checks recorded yet")
 # Step 1: Load predictions and customer data
     predictions_path = _root.parent / "sprint-06" / "day-36" / "output" / "predictions.csv"
     pred_df = pd.read_csv(predictions_path) 

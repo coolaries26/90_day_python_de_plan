@@ -25,6 +25,7 @@ for p in [
     PROJECT_ROOT / "sprint-01" / "day-04",
     PROJECT_ROOT / "sprint-06" / "day-36",
     PROJECT_ROOT / "sprint-06" / "day-38",
+    PROJECT_ROOT / "sprint-06" / "day-40",
     PROJECT_ROOT / "sprint-03" / "day-16",
 ]:
     sys.path.insert(0, str(p))
@@ -254,6 +255,125 @@ def log_model_metrics(**context) -> None:
     dispose_engine()
     print("Model metrics logged to etl_audit_log")
 
+# Task 5 function — WRITE THIS YOURSELF:
+def evaluate_and_detect_drift(**context) -> None:
+    """
+    Evaluate current model accuracy and check for drift.
+
+    HINTS:
+    Step 1: Pull model path from XCom
+        model_path = context["ti"].xcom_pull(
+            task_ids="train_pipeline", key="model_path"
+        )
+
+    Step 2: Load pipeline + features
+        import joblib
+        pipeline = joblib.load(model_path)
+        from feature_engineering import main as get_features
+        X, y = get_features()
+
+    Step 3: Evaluate on 20% test set (same split as training)
+        from sklearn.model_selection import train_test_split
+        from sklearn.metrics import accuracy_score
+        _, X_test, _, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42, stratify=y
+        )
+        y_pred = pipeline.predict(X_test)
+        current_accuracy = accuracy_score(y_test, y_pred)
+
+    Step 4: Load baseline + detect drift
+        sys.path.insert(0, str(PROJECT_ROOT / "sprint-06" / "day-40"))
+        from drift_detector import detect_drift, load_baseline_accuracy, save_baseline_accuracy
+
+        meta_path = PIPELINE_DIR / "model_metadata.json"
+        baseline  = load_baseline_accuracy(meta_path)
+        result    = detect_drift(current_accuracy, baseline)
+
+    Step 5: If this is the first run, save current as baseline
+        if baseline == 0.90:   # default value = first run
+            save_baseline_accuracy(meta_path, current_accuracy)
+
+    Step 6: Write to ml_drift_log if drift or warning
+        if result.drift_detected or result.warning_only:
+            from sqlalchemy.orm import Session
+            from db_utils import get_engine, dispose_engine
+            engine = get_engine()
+            # INSERT into ml_drift_log (create table if needed)
+            with engine.connect() as conn:
+                conn.execute(text(""
+                    INSERT INTO ml_drift_log
+                        (checked_at, baseline_accuracy, current_accuracy,
+                         delta, status, message)
+                    VALUES (:checked_at, :baseline, :current, :delta, :status, :message)
+                ""), {
+                    "checked_at": result.checked_at,
+                    "baseline":   result.baseline_accuracy,
+                    "current":    result.current_accuracy,
+                    "delta":      result.delta,
+                    "status":     result.status,
+                    "message":    result.message,
+                })
+                conn.commit()
+            dispose_engine()
+
+    Step 7: Push result to XCom
+        context["ti"].xcom_push(key="drift_result", value=result.as_dict)
+        print(f"Drift check: {result.status} — {result.message}")
+    """
+    # YOUR CODE HERE
+    #Step 1: Pull model path from XCom
+    model_path = context["ti"].xcom_pull(
+        task_ids="train_pipeline", key="model_path"
+    )
+    #Step 2: Load pipeline + features
+    import joblib
+    pipeline = joblib.load(model_path)
+    from feature_engineering import main as get_features
+    X, y = get_features()
+    #Step 3: Evaluate on 20% test set (same split as training)
+    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import accuracy_score
+    _, X_test, _, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y
+    )
+    y_pred = pipeline.predict(X_test)
+    current_accuracy = accuracy_score(y_test, y_pred)
+    #Step 4: Load baseline + detect drift
+    sys.path.insert(0, str(PROJECT_ROOT / "sprint-06" / "day-40"))
+    from drift_detector import detect_drift, load_baseline_accuracy, save_baseline_accuracy
+    meta_path = PIPELINE_DIR / "model_metadata.json"
+    baseline  = load_baseline_accuracy(meta_path)
+    result    = detect_drift(current_accuracy, baseline)
+    #Step 5: If this is the first run, save current as baseline
+    if baseline == 0.90:   # default value = first run
+        save_baseline_accuracy(meta_path, current_accuracy)
+    #Step 6: Write to ml_drift_log if drift or warning
+    if result.drift_detected or result.warning_only:
+        from sqlalchemy.orm import Session
+        from db_utils import get_engine, dispose_engine
+        from sqlalchemy import text
+        engine = get_engine()
+        # INSERT into ml_drift_log (create table if needed)
+        with engine.connect() as conn:
+            conn.execute(text("""
+                INSERT INTO ml_drift_log
+                    (checked_at, baseline_accuracy, current_accuracy,
+                     delta, status, message)
+                VALUES (:checked_at, :baseline, :current, :delta, :status, :message)
+            """), {
+                "checked_at": result.checked_at,
+                "baseline":   result.baseline_accuracy,
+                "current":    result.current_accuracy,
+                "delta":      result.delta,
+                "status":     result.status,
+                "message":    result.message,
+            })
+            conn.commit()
+        dispose_engine()
+    #Step 7: Push result to XCom
+    context["ti"].xcom_push(key="drift_result", value=result.as_dict())
+    print(f"Drift check: {result.status} — {result.message}")
+
 
 
 with DAG(
@@ -291,5 +411,11 @@ with DAG(
         pool="db_connection_pool",
         trigger_rule="all_done",
     )
+    task_drift = PythonOperator(
+        task_id="evaluate_and_detect_drift",
+        python_callable=evaluate_and_detect_drift,
+        pool="db_connection_pool",
+        trigger_rule="all_done",
+    )   
 
-    task_features >> task_train >> task_predict >> task_log
+    task_features >> task_train >> task_predict >> task_log >> task_drift

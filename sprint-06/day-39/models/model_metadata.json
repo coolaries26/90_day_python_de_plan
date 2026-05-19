@@ -1,0 +1,17 @@
+{
+  "trained_at": "2026-05-18T18:41:55.309800",
+  "versioned_file": "churn_pipeline_20260518_184153.pkl",
+  "latest_file": "churn_pipeline_latest.pkl",
+  "n_samples": 599,
+  "features": [
+    "total_rentals",
+    "total_spend",
+    "days_since_last_payment",
+    "avg_spend_per_rental",
+    "log_total_spend",
+    "log_total_rentals",
+    "segment_encoded",
+    "is_high_value",
+    "is_recent"
+  ]
+}

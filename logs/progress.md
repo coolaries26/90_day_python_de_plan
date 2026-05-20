@@ -63,3 +63,4 @@
 | 037 | S06 | 2026-05-18 00:51 | `9a4eef49` | `sprint-06/day-37-random-forest` | RandomForest GridSearchCV, model comparison, churn risk Streamlit page |
 | 038 | S06 | 2026-05-18 23:21 | `57813860` | `sprint-06/day-38-smote-pipeline` | SMOTE oversampling, before/after comparison, sklearn ImbPipeline saved |
 | 039 | S06 | 2026-05-19 23:34 | `fa6c266a` | `sprint-06/day-39-ml-dag` | Airflow ML DAG: auto-retrain, versioned model, predictions to DB, audit log |
+| 040 | S06 | 2026-05-20 00:49 | `8390c3f5` | `sprint-06/day-40-drift-detection` | Drift detection: drift_detector.py, Task 5 in ML DAG, ml_drift_log table, Streamlit alert |

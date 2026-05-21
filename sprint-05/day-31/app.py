@@ -8,6 +8,9 @@ Navigation: sidebar radio buttons → loads different pages
 """
 
 import streamlit as st
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent / "pages"))    # for page imports
 
 # Page config — must be FIRST Streamlit command
 st.set_page_config(
@@ -23,9 +26,17 @@ with st.sidebar:
     st.markdown("---")
     page = st.radio(
         "Navigate to:",
-        options=["📊 Overview", "👥 Customers", "🎬 Films", "📅 Rentals", "⚠️ Churn Risk","🔵 Customer Clusters"],
+        options=[
+            "📊 Overview", 
+            "👥 Customers", 
+            "🎬 Films", 
+            "📅 Rentals", 
+            "⚠️ Churn Risk",
+            "🔵 Customer Clusters"
+            ],
         index=0,
     )
+    
     st.markdown("---")
     st.caption("Python DE Journey — Day 31")
     st.caption("Data: dvdrental PostgreSQL")
@@ -40,25 +51,25 @@ with st.sidebar:
     st.caption("Python DE Journey — Day 32")
     st.caption("Data: dvdrental PostgreSQL")
 
+# Page imports
 # Load selected page
 if page == "📊 Overview":
-    import pages.overview as overview
+    import overview as overview
     overview.render()
 elif page == "👥 Customers":
-    import pages.customers as customers
+    import customers as customers
     customers.render()
 elif page == "🎬 Films":
-#    st.title("🎬 Films")
-    import pages.films as films
+    import films as films
     films.render()
-elif page == "📅 Rentals":  # This page will be added on Day 35
-    import pages.rentals as rentals
+elif page == "📅 Rentals":  # This page has been added on Day 35
+    import rentals as rentals
     rentals.render()
-elif page == "⚠️ Churn Risk": # This page will be added on Day 37 for churn risk analytics
-    import pages.churn_risk as churn
+elif page == "⚠️ Churn Risk": # This page has been added on Day 37 for churn risk analytics
+    import churn_risk as churn
     churn.render()
-elif page == "🔵 Customer Clusters":
-    import pages.clusters as clusters
+elif page == "🔵 Customer Clusters":    # This page has been added on Day 41 for customer clustering
+    import clusters as clusters
     clusters.render()
 else:
     st.info("Films page coming on Day 32")

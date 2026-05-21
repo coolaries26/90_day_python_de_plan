@@ -368,10 +368,10 @@ def evaluate_and_detect_drift(**context) -> None:
                 "status":     result.status,
                 "message":    result.message,
             })
-            conn.commit()
+#            conn.commit()
         dispose_engine()
     #Step 7: Push result to XCom
-    context["ti"].xcom_push(key="drift_result", value=result.as_dict())
+    context["ti"].xcom_push(key="drift_result", value=result)
     print(f"Drift check: {result.status} — {result.message}")
 
 

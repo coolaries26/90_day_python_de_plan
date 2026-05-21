@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-05-18T23:19:19.495117",
+  "created_at": "2026-05-21T23:51:08.684593",
   "pipeline_file": "churn_pipeline_latest.pkl",
-  "versioned_file": "churn_pipeline_20260518_231919.pkl",
+  "versioned_file": "churn_pipeline_20260521_235108.pkl",
   "steps": [
     "smote",
     "scaler",
@@ -16,7 +16,8 @@
     "log_total_rentals",
     "segment_encoded",
     "is_high_value",
-    "is_recent"
+    "is_recent",
+    "rental_frequency"
   ],
-  "n_features": 9
+  "n_features": 10
 }

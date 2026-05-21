@@ -64,3 +64,4 @@
 | 038 | S06 | 2026-05-18 23:21 | `57813860` | `sprint-06/day-38-smote-pipeline` | SMOTE oversampling, before/after comparison, sklearn ImbPipeline saved |
 | 039 | S06 | 2026-05-19 23:34 | `fa6c266a` | `sprint-06/day-39-ml-dag` | Airflow ML DAG: auto-retrain, versioned model, predictions to DB, audit log |
 | 040 | S06 | 2026-05-20 00:49 | `8390c3f5` | `sprint-06/day-40-drift-detection` | Drift detection: drift_detector.py, Task 5 in ML DAG, ml_drift_log table, Streamlit alert |
+| 041 | S06 | 2026-05-21 00:33 | `b83f9211` | `sprint-06/day-41-clustering` | KMeans clustering: elbow method, cluster profiles, DB write, Streamlit clusters page |

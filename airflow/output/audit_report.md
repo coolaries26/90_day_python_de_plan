@@ -1,14 +1,14 @@
 # Audit Report
 
-**Report generated at:** 2026-05-18 18:20:43.117811
+**Report generated at:** 2026-05-21 19:28:25.191680
 
 ## Summary
 - Total Runs: 20
-- Successful: 12
-- Failed: 8
-- Total Rows Loaded: 95
-- Pipelines: dag_ml_retrain.train_pipeline, dag_chart_generator, dag_chart_generator.generate_static_charts, dag_chart_generator.generate_interactive_charts, rental_summary_daily.write_rental_audit
-- Latest Run: 2026-05-18 23:50:24.838240
+- Successful: 17
+- Failed: 3
+- Total Rows Loaded: 4872
+- Pipelines: dag_ml_retrain, dag_ml_retrain.evaluate_and_detect_drift, dag_chart_generator, dag_ml_retrain.train_pipeline
+- Latest Run: 2026-05-22 00:53:44.213162
 
 ## Pipeline Count Checks
 - **customer**: 599 rows (min 500) ✅ PASS

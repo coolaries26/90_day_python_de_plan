@@ -19,6 +19,7 @@ Target:
 
 from __future__ import annotations
 
+from pyexpat import features
 import sys
 from pathlib import Path
 import numpy as np
@@ -93,6 +94,11 @@ def engineer_features(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
     features["is_high_value"] = (features["total_spend"] > spend_median).astype(int)
     features["is_recent"]     = (features["days_since_last_payment"] < 30).astype(int)
 
+    # total_rentals divided by days_since_last_payment + 1
+    # (avoids division by zero)
+    features["rental_frequency"] = (
+        features["total_rentals"] / (features["days_since_last_payment"] + 1)
+    ).round(4)
     # Target variable
     target = df["is_active"].astype(int)
 

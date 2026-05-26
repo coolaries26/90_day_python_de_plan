@@ -66,3 +66,4 @@
 | 040 | S06 | 2026-05-20 00:49 | `8390c3f5` | `sprint-06/day-40-drift-detection` | Drift detection: drift_detector.py, Task 5 in ML DAG, ml_drift_log table, Streamlit alert |
 | 041 | S06 | 2026-05-21 00:33 | `b83f9211` | `sprint-06/day-41-clustering` | KMeans clustering: elbow method, cluster profiles, DB write, Streamlit clusters page |
 | 042 | S06 | 2026-05-22 01:19 | `f66fab13` | `sprint-06/day-42-sprint-test` | Sprint 06 complete |
+| 043 | S07 | 2026-05-26 00:33 | `37a8f52b` | `sprint-07/day-43-capstone-design` | Capstone: ecommerce_db setup, raw schema loaded 550k rows, architecture doc, project scaffold |

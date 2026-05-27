@@ -71,9 +71,7 @@ ltv_with_segments AS (
             ELSE                          'Bronze'
         END AS value_segment,
         CASE
-            WHEN days_since_last_order > 365 THEN 1
-            WHEN total_orders = 1
-             AND days_since_last_order > 180 THEN 1
+            WHEN total_orders = 1 THEN 1
             ELSE 0
         END AS is_churned,
         ROUND(total_spent / NULLIF(total_orders, 0), 2) AS avg_order_value

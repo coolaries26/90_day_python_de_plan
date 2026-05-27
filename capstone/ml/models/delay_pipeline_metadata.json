@@ -1,0 +1,13 @@
+{
+  "model_name": "delay_pipeline",
+  "trained_at": "2026-05-28T03:05:04.789409",
+  "n_features": 5,
+  "features": [
+    "delivery_days_estimated",
+    "payment_value",
+    "product_count",
+    "log_payment_value",
+    "is_expensive"
+  ],
+  "n_samples": 96588
+}

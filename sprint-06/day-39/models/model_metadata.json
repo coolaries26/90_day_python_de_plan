@@ -1,6 +1,6 @@
 {
-  "trained_at": "2026-05-21T19:28:13.647572",
-  "versioned_file": "churn_pipeline_20260521_192812.pkl",
+  "trained_at": "2026-05-28T17:54:18.243649",
+  "versioned_file": "churn_pipeline_20260528_175415.pkl",
   "latest_file": "churn_pipeline_latest.pkl",
   "n_samples": 599,
   "features": [
@@ -16,5 +16,5 @@
     "rental_frequency"
   ],
   "baseline_accuracy": 0.9333,
-  "baseline_set_at": "2026-05-21T19:28:46.939561"
+  "baseline_set_at": "2026-05-28T17:54:55.210313"
 }

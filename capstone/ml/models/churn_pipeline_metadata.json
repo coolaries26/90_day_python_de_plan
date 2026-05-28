@@ -1,8 +1,7 @@
 {
   "model_name": "churn_pipeline",
-  "trained_at": "2026-05-28T03:00:07.482124",
+  "trained_at": "2026-05-28T19:13:56.357674",
   "features": [
-    "has_review",
     "total_spent",
     "avg_order_value",
     "days_since_last_order",
@@ -10,6 +9,6 @@
     "cancel_rate",
     "log_total_spent"
   ],
-  "n_features": 7,
+  "n_features": 6,
   "n_samples": 96218
 }

@@ -69,3 +69,4 @@
 | 043 | S07 | 2026-05-26 00:33 | `37a8f52b` | `sprint-07/day-43-capstone-design` | Capstone: ecommerce_db setup, raw schema loaded 550k rows, architecture doc, project scaffold |
 | 044 | S07 | 2026-05-27 01:10 | `8dd1cf79` | `sprint-07/day-44-etl-analytics` | Capstone ETL: 5 analytics tables — customer_ltv, order_metrics, seller_performance, product_analytics, monthly_revenue |
 | 045 | S07 | 2026-05-28 03:07 | `df797a12` | `sprint-07/day-45-ml` | Capstone ML: churn pipeline, delay pipeline, predictions to ml schema |
+| 046 | S07 | 2026-05-29 01:23 | `d65c366f` | `sprint-07/day-46-airflow` | Capstone Airflow: dag_ecommerce_etl, all 4 tasks green, churn leakage fixed, delay model <10MB |

@@ -42,10 +42,72 @@
 | Delay | Will order be delivered late? | product weight, distance, seller rating | GradientBoosting |
 
 ## Pipeline Architecture
-[Add your architecture diagram or Mermaid chart here]
+
+```mermaid
+flowchart TD
+    A[Olist CSV Files\n8 tables, 550k rows] -->|load_raw_data.py| B[PostgreSQL\nraw schema]
+    B -->|analytics_etl.py| C[PostgreSQL\nanalytics schema\n5 tables, 196k rows]
+    C -->|churn_model.py| D[ml.churn_predictions\n96,218 rows]
+    C -->|delay_model.py| E[ml.delay_predictions\n96,588 rows]
+    B --> C
+    C --> D
+    C --> E
+    D --> F[Streamlit Dashboard\nport 8502]
+    E --> F
+    G[Airflow DAG\ndag_ecommerce_etl\n@weekly] -->|orchestrates| B
+    G --> C
+    G --> D
+    G --> E
+```
+
+## Database Schema
+
+### raw schema (source data — no transforms)
+| Table                               | Purpose                                        |
+| ----------------------------------- | ---------------------------------------------- |
+| `olist_orders_dataset`              | Order status and lifecycle timestamps          |
+| `olist_order_items_dataset`         | Products purchased in each order               |
+| `olist_order_payments_dataset`      | Payment methods and payment amounts            |
+| `olist_order_reviews_dataset`       | Customer ratings and reviews                   |
+| `olist_customers_dataset`           | Customer demographic and location information  |
+| `olist_sellers_dataset`             | Seller information and geographic distribution |
+| `olist_products_dataset`            | Product metadata and dimensions                |
+| `product_category_name_translation` | Portuguese-to-English category mapping         |
+
+
+### analytics schema (business metrics)
+| Table | Business Question | Interview Relevance |
+|-------|------------------|---------------------|
+| `customer_ltv` | Who are our most valuable customers? Will they churn? | LTV is asked in every DE/DS interview |
+| `order_metrics` | How fast are we delivering? Are customers happy? | Ops KPI — every e-commerce company tracks this |
+| `seller_performance` | Which sellers drive revenue and which hurt ratings? | Marketplace analytics — Amazon, Shopify core |
+| `product_analytics` | Which categories generate most revenue? | Inventory/pricing decisions |
+| `monthly_revenue` | How is the business growing MoM? | CFO metric — always asked |
+
+### ml schema (model outputs)
+[Add prediction table definitions from Day 45]
+| Table | Business Question | Interview Relevance |
+|-------|------------------|---------------------|
+| `ml.churn_predictions` |has ~96k rows | [  ] |
+| `ml.delay_predictions` |has ~96k rows | [  ] |
+
+
+## Design Decisions
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Schema separation | raw/analytics/ml | Clean lineage — each layer has one purpose |
+| Payment aggregation | SUM before JOIN | raw.order_payments has multiple rows per order |
+| Churn definition | single-purchase = churned | Dataset ends 2018 — time-based definition unreliable |
+| Model persistence | ImbPipeline pkl | Scaler + SMOTE config travels with model |
+| Airflow schedule | @weekly | Static dataset — daily refresh adds no value | 
+```
 
 ## Design Decisions
 1. Separate raw/analytics/ml schemas for clean separation
 2. appuser NOCREATEDB — uses GRANT CREATE per schema
 3. All timestamps stored as TIMESTAMP (not VARCHAR)
 4. English category names via JOIN to translation table
+
+
+---

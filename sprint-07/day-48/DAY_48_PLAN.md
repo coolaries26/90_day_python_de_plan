@@ -333,7 +333,7 @@ echo "All systems go ✅"
 ```bash
 # Commit Day 48
 python scripts/daily_commit.py --day 48 --sprint 7 ^
-    --message "Capstone complete: README, ARCHITECTURE.md, DATA_QUALITY.md, orders format fix, sprint close" ^
+    --message "Capstone complete: README, ARCHITECTURE.md, DATA_QUALITY.md, orders format fix, sprint close"^
     --merge
 
 # Close Sprint 07

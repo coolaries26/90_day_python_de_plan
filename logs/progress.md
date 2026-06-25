@@ -72,3 +72,4 @@
 | 046 | S07 | 2026-05-29 01:23 | `d65c366f` | `sprint-07/day-46-airflow` | Capstone Airflow: dag_ecommerce_etl, all 4 tasks green, churn leakage fixed, delay model <10MB |
 | 047 | S07 | 2026-05-31 02:40 | `abec2b83` | `sprint-07/day-47-dashboard` | Capstone dashboard: 5 pages, live PostgreSQL, churn+delay predictions, portfolio-ready |
 | 048 | S07 | 2026-06-01 01:24 | `0d0e56d9` | `sprint-07/day-48-final-demo` | Sprint 07 complete |
+| 049 | S08 | 2026-06-25 00:25 | `ed6a9d78` | `sprint-08/day-49-window-functions` | Advanced SQL: 8 window function queries — running totals, ranking, percentiles, cohort analysis |

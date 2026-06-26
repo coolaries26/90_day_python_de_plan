@@ -1,0 +1,47 @@
+-- mart_order_metrics.sql
+-- YOUR TASK: Order-level metrics using staging models
+-- Requirements (same logic as analytics.order_metrics from Day 44
+--               but using ref() instead of raw schema):
+--   FROM {{ ref('stg_orders') }} o
+--   JOIN {{ ref('stg_customers') }} c ON o.customer_id = c.customer_id
+--   JOIN {{ ref('stg_order_payments') }} p ON o.order_id = p.order_id
+--   LEFT JOIN {{ source('raw', 'order_reviews') }} r ON o.order_id = r.order_id
+--   JOIN (SELECT order_id, COUNT(*) AS product_count FROM raw.order_items GROUP BY order_id) items
+--       ON o.order_id = items.order_id
+--   WHERE o.order_status = 'delivered'
+--
+-- Columns: order_id, customer_unique_id, order_status,
+--          purchased_at, delivered_at, estimated_delivery_at,
+--          delivery_days (from stg_orders), is_late (from stg_orders),
+--          total_payment (from stg_order_payments),
+--          review_score, product_count
+-- Config: materialized='table'
+
+{{ config(materialized='table') }}
+
+SELECT
+    o.order_id,
+    c.customer_unique_id,
+    o.order_status,
+    o.purchased_at,
+    o.delivered_at,
+    o.estimated_delivery_at,
+    o.delivery_days,
+    o.is_late,
+    p.total_payment,
+    r.review_score,
+    items.product_count
+FROM {{ ref('stg_orders') }} o
+JOIN {{ ref('stg_customers') }} c
+    ON o.customer_id = c.customer_id
+JOIN {{ ref('stg_order_payments') }} p
+    ON o.order_id = p.order_id
+LEFT JOIN {{ source('raw', 'order_reviews') }} r
+    ON o.order_id = r.order_id
+JOIN (
+        SELECT order_id, COUNT(*) AS product_count
+        FROM {{ source('raw', 'order_items') }}
+        GROUP BY order_id
+    ) items
+    ON o.order_id = items.order_id
+WHERE o.order_status = 'delivered'

@@ -9,7 +9,6 @@ Run: python sprint-08/day-50/advanced_sql.py
 """
 
 from __future__ import annotations
-
 import sys
 from pathlib import Path
 import pandas as pd

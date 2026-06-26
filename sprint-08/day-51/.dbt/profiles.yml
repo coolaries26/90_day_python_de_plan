@@ -1,0 +1,12 @@
+ecommerce_dbt:
+  outputs:
+    dev:
+      dbname: ecommerce_db
+      host: 127.0.0.1
+      pass: AppUser@2024!
+      port: 5432
+      schema: dbt_dev
+      threads: 4
+      type: postgres
+      user: appuser
+  target: dev

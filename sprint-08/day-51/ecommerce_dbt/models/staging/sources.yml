@@ -1,0 +1,40 @@
+version: 2
+
+sources:
+  - name: raw
+    database: ecommerce_db
+    schema: raw
+    description: "Raw Olist e-commerce data loaded from CSV"
+    tables:
+      - name: orders
+        description: "99,441 customer orders with status and timestamps"
+        columns:
+          - name: order_id
+            tests:
+              - unique
+              - not_null
+
+      - name: order_items
+        description: "112,650 line items within orders"
+
+      - name: order_payments
+        description: "103,886 payment records (multiple per order)"
+
+      - name: order_reviews
+        description: "99,224 customer reviews"
+
+      - name: customers
+        description: "99,441 unique customer records"
+        columns:
+          - name: customer_id
+            tests:
+              - not_null
+
+      - name: sellers
+        description: "3,095 marketplace sellers"
+
+      - name: products
+        description: "32,951 product listings"
+
+      - name: product_category_translation
+        description: "71 category name translations (PT → EN)"

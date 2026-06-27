@@ -75,3 +75,4 @@
 | 049 | S08 | 2026-06-25 00:25 | `ed6a9d78` | `sprint-08/day-49-window-functions` | Advanced SQL: 8 window function queries — running totals, ranking, percentiles, cohort analysis |
 | 050 | S08 | 2026-06-26 01:44 | `973d5a2d` | `sprint-08/day-50-self-joins-explain` | Advanced SQL: self-joins, recursive CTEs, EXPLAIN ANALYZE, 3 indexes created |
 | 051 | S08 | 2026-06-27 01:45 | `39f6701c` | `sprint-08/day-51-dbt-setup` | dbt: project init, 3 staging models, 2 mart models, dbt run + test passing |
+| 051 | S08 | 2026-06-28 01:30 | `92d7c4fd` | `sprint-08/day-51-dbt-setup` | dbt: project init, 3 staging models, 2 mart models, dbt run + test passing |

@@ -15,7 +15,7 @@ WITH customer_orders AS (
         MAX(o.purchased_at)                            AS last_order_date,
         EXTRACT(DAY FROM NOW() - MAX(o.purchased_at))::INT
                                                        AS days_since_last_order,
-        AVG(r.review_score)                            AS avg_review_score,
+        ROUND(AVG(r.review_score)::numeric, 2)            AS avg_review_score,
         COUNT(CASE WHEN o.order_status = 'delivered' THEN 1 END)
                                                        AS delivered_orders,
         COUNT(CASE WHEN o.order_status = 'canceled' THEN 1 END)

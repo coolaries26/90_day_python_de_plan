@@ -2,31 +2,75 @@ version: 2
 
 models:
   - name: stg_orders
-    description: "Cleaned orders with proper timestamps and derived columns"
+    description: |
+      Cleaned orders from raw.orders.
+      Casts string timestamps to TIMESTAMP.
+      Adds derived columns: is_late, delivery_days, purchase_month.
+      One row per order_id.
     columns:
       - name: order_id
-        description: "Primary key"
+        description: "Primary key — unique order identifier"
         tests:
           - unique
           - not_null
+      - name: customer_id
+        description: "Foreign key to stg_customers"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
       - name: order_status
+        description: "Current order status"
         tests:
           - accepted_values:
               values: ['delivered', 'shipped', 'canceled', 'unavailable',
                        'invoiced', 'processing', 'created', 'approved']
+      - name: is_late
+        description: "True if actual delivery exceeded estimated delivery"
+        tests:
+          - accepted_values:
+              values: [true, false]
+              quote: false
+              config:
+                where: "is_late IS NOT NULL"
+      - name: delivery_days
+        description: "Days from purchase to delivery (NULL if not delivered)"
 
   - name: stg_customers
-    description: "Customer dimension table"
+    description: |
+      Customer dimension from raw.customers.
+      One row per customer_id (not customer_unique_id —
+      a unique customer can place orders with different customer_ids).
     columns:
       - name: customer_id
+        description: "Primary key — per-order customer identifier"
         tests:
           - unique
           - not_null
+      - name: customer_unique_id
+        description: "True unique customer identifier across orders"
+        tests:
+          - not_null
+      - name: customer_state
+        description: "Brazilian state abbreviation (e.g. SP, RJ, MG)"
 
   - name: stg_order_payments
-    description: "Payments aggregated to one row per order"
+    description: |
+      Payments aggregated to one row per order.
+      Raw table has multiple rows per order (instalments, vouchers).
+      This model solves the double-counting problem.
     columns:
       - name: order_id
+        description: "Primary key — one row per order"
         tests:
           - unique
           - not_null
+      - name: total_payment
+        description: "Sum of all payment values for this order"
+        tests:
+          - not_null
+      - name: payment_installments
+        description: "Number of payment records for this order"
+      - name: payment_types
+        description: "Comma-separated list of payment methods used"

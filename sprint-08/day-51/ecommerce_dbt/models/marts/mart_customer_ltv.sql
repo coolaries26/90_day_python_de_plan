@@ -25,10 +25,14 @@ WITH customer_orders AS (
         ON c.customer_id = o.customer_id
     JOIN {{ ref('stg_order_payments') }} p
         ON o.order_id = p.order_id
-    LEFT JOIN {{ source('raw', 'order_reviews') }} r
-        ON o.order_id = r.order_id
+    LEFT JOIN (
+        SELECT order_id, AVG(review_score) AS review_score
+        FROM {{ source('raw', 'order_reviews') }}
+        GROUP BY order_id
+        ) r ON o.order_id = r.order_id
     GROUP BY c.customer_unique_id, c.customer_city, c.customer_state
-)
+),
+ltv AS (
 SELECT
     *,
     CASE
@@ -41,8 +45,30 @@ SELECT
         WHEN total_orders = 1 THEN 1
         ELSE 0
     END                              AS is_churned,
+    ROW_NUMBER() OVER (
+            PARTITION BY customer_unique_id
+            ORDER BY total_spent DESC
+    ) AS rn,
     ROUND((total_spent / NULLIF(total_orders, 0))::numeric, 2)
 --    ROUND(total_spent / NULLIF(total_orders, 0), 2)
                                      AS avg_order_value
 FROM customer_orders
 ORDER BY total_spent DESC
+)
+SELECT customer_unique_id,
+       customer_city,
+       customer_state,
+       total_orders,
+       total_spent,
+       first_order_date,
+       last_order_date,
+       days_since_last_order,
+       avg_review_score,
+       delivered_orders,
+       cancelled_orders,
+       value_segment,
+       is_churned,
+       rn,
+       avg_order_value
+FROM ltv
+WHERE rn = 1             -- keep only the highest-spend row per customer

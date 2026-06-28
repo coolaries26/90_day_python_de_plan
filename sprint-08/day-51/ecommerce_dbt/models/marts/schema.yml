@@ -1,0 +1,72 @@
+version: 2
+
+models:
+  - name: mart_customer_ltv
+    description: |
+      Customer Lifetime Value — one row per unique customer.
+      Aggregates all orders, payments and reviews per customer.
+      Used by:
+        - Streamlit dashboard (Customers page)
+        - ML churn prediction model
+        - KMeans customer segmentation
+      Key metrics: total_spent, is_churned, value_segment, avg_review_score.
+    columns:
+      - name: customer_unique_id
+        description: "Primary key — unique customer across all orders"
+        tests:
+          - unique
+          - not_null
+      - name: total_orders
+        description: "Number of orders placed by this customer"
+        tests:
+          - not_null
+      - name: total_spent
+        description: "Lifetime spend in BRL (Brazilian Reais)"
+        tests:
+          - not_null
+      - name: value_segment
+        description: "Spend-based segment: Bronze/Silver/Gold/Platinum"
+        tests:
+          - accepted_values:
+              values: ['Bronze', 'Silver', 'Gold', 'Platinum']
+      - name: is_churned
+        description: "1 if single-purchase customer, 0 if repeat buyer"
+        tests:
+          - accepted_values:
+              values: [0, 1]
+              quote: false
+  - name: mart_order_metrics
+    description: |
+      Customer order metrics — one row per unique order.
+      Aggregates order, payment and review data per order.
+      used by:
+        - Streamlit dashboard (Orders pagex)
+        - ML churn prediction model
+      key metrics: is_late, review_score, total_payment.
+    columns:
+      - name: order_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: is_late
+        description: "Indicates if the order was delivered late"
+        tests:
+          - accepted_values:
+              values: [true, false]
+              quote: false
+          - not_null:
+              config:
+                where: "order_status = 'delivered'"
+      - name: review_score
+        description: | 
+          Customer review score (1-5, NULL if no review)
+#        tests:
+#          - accepted_values:
+#              quote: false
+#              config:
+#                where: "review_score IS NOT NULL"
+      - name: total_payment
+        description: "Total payment for the order"
+        tests:
+          - not_null

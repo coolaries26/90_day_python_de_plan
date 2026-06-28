@@ -27,7 +27,7 @@ SELECT
     o.delivered_at,
     o.estimated_delivery_at,
     o.delivery_days,
-    o.is_late,
+    COALESCE(o.is_late, false) AS is_late,
     p.total_payment,
     r.review_score,
     items.product_count
@@ -36,8 +36,11 @@ JOIN {{ ref('stg_customers') }} c
     ON o.customer_id = c.customer_id
 JOIN {{ ref('stg_order_payments') }} p
     ON o.order_id = p.order_id
-LEFT JOIN {{ source('raw', 'order_reviews') }} r
-    ON o.order_id = r.order_id
+LEFT JOIN (
+    SELECT order_id, AVG(review_score) AS review_score
+    FROM {{ source('raw', 'order_reviews') }}
+    GROUP BY order_id
+    ) r ON o.order_id = r.order_id
 JOIN (
         SELECT order_id, COUNT(*) AS product_count
         FROM {{ source('raw', 'order_items') }}

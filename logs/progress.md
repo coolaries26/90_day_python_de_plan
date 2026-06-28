@@ -76,3 +76,4 @@
 | 050 | S08 | 2026-06-26 01:44 | `973d5a2d` | `sprint-08/day-50-self-joins-explain` | Advanced SQL: self-joins, recursive CTEs, EXPLAIN ANALYZE, 3 indexes created |
 | 051 | S08 | 2026-06-27 01:45 | `39f6701c` | `sprint-08/day-51-dbt-setup` | dbt: project init, 3 staging models, 2 mart models, dbt run + test passing |
 | 051 | S08 | 2026-06-28 01:30 | `92d7c4fd` | `sprint-08/day-51-dbt-setup` | dbt: project init, 3 staging models, 2 mart models, dbt run + test passing |
+| 051 | S08 | 2026-06-28 02:09 | `11ed1afe` | `sprint-08/day-52-dbt-tests-docs` | dbt: project init, 3 staging models, 2 mart models, dbt run + test passing |

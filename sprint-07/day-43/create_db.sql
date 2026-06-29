@@ -5,6 +5,7 @@ CREATE DATABASE ecommerce_db
 
 -- Grant appuser access (reuse existing appuser from dvdrental)
 GRANT CONNECT ON DATABASE ecommerce_db TO appuser;
+GRANT CREATE ON DATABASE ecommerce_db TO appuser;
 
 \c ecommerce_db
 

@@ -78,3 +78,4 @@
 | 051 | S08 | 2026-06-28 01:30 | `92d7c4fd` | `sprint-08/day-51-dbt-setup` | dbt: project init, 3 staging models, 2 mart models, dbt run + test passing |
 | 051 | S08 | 2026-06-28 02:09 | `11ed1afe` | `sprint-08/day-52-dbt-tests-docs` | dbt: project init, 3 staging models, 2 mart models, dbt run + test passing |
 | 051 | S08 | 2026-06-29 01:43 | `558dbd4b` | `sprint-08/day-52-dbt-tests-docs` | dbt: 5 models, 31 tests passing, staging + marts, docs generated |
+| 053 | S08 | 2026-06-30 00:47 | `65c90268` | `sprint-08/day-53-incremental-snapshots` | dbt incremental mart_order_metrics, orders_snapshot SCD2, snapshot history queries |

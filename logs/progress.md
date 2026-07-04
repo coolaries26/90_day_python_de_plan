@@ -81,3 +81,4 @@
 | 053 | S08 | 2026-06-30 00:47 | `65c90268` | `sprint-08/day-53-incremental-snapshots` | dbt incremental mart_order_metrics, orders_snapshot SCD2, snapshot history queries |
 | 054 | S08 | 2026-07-01 01:24 | `42b36f8a` | `sprint-08/day-54-query-optimisation` | Query optimisation: 3 composite indexes, partitioned table, benchmark report |
 | 055 | S08 | 2026-07-05 00:05 | `9fd68c8e` | `sprint-08/day-55-integration` | Integration: Airflow runs dbt run/test/snapshot, Streamlit reads dbt marts |
+| 056 | S08 | 2026-07-05 02:28 | `cfaa1594` | `sprint-08/day-56-sprint-test` | Sprint 08 test: state revenue window, mart_seller_summary, index test, full pipeline |

@@ -48,10 +48,9 @@ def render():
     if status == "On Time":  filtered = df[df["is_late"] == 0]
     if status == "Late":     filtered = df[df["is_late"] == 1]
     col1, col2, col3 = st.columns(3)
-   
     total_orders = len(filtered)
     late_rate = filtered["is_late"].mean() * 100
-    avg_delivery_days = filtered["delivery_days_actual"].mean()
+    avg_delivery_days = filtered["delivery_days"].mean()    # if using dbt_dev_marts.mart_order_metrics, use "delivery_days" instead of "delivery_days_actual"
     col1.metric("Total Orders", f"{total_orders:,}")
     col2.metric("Late Delivery Rate", f"{late_rate:.2f}%")
     col3.metric("Avg Delivery Days", f"{avg_delivery_days:.2f}")
@@ -59,7 +58,7 @@ def render():
     on_time_avg = df[df["is_late"] == 0]["review_score"].mean()
     late_avg = df[df["is_late"] == 1]["review_score"].mean()
     st.info(f"⚡ Late orders receive avg {late_avg:.2f} ⭐ vs {on_time_avg:.2f} ⭐ for on-time orders")
-    fig1 = px.histogram(filtered, x="delivery_days_actual", nbins=30, title="Distribution of Actual Delivery Days", color_discrete_map={"0": "seagreen", "1": "tomato"}, labels={"delivery_days_actual": "Actual Delivery Days"})
+    fig1 = px.histogram(filtered, x="delivery_days", nbins=30, title="Distribution of Delivery Days", color_discrete_map={"0": "seagreen", "1": "tomato"}, labels={"delivery_days": "Delivery Days"})
     st.plotly_chart(fig1)
     fig2 = px.box(filtered, x="is_late", y="review_score", title="Review Score by Delivery Status", labels={"is_late": "Is Late"}, color_discrete_sequence=["seagreen", "tomato"])
     st.plotly_chart(fig2)

@@ -19,7 +19,7 @@ _ip = subprocess.run(
 ).stdout.strip()
 os.environ["DB_HOST"] = _ip or "172.18.144.1"
 
-PROJECT_ROOT = Path("/mnt/c/90_day_python_de_plan")
+PROJECT_ROOT = Path("/mnt/d/alsgit/90_day_python_de_plan")
 for p in [
     PROJECT_ROOT / "sprint-01" / "day-02",
     PROJECT_ROOT / "sprint-01" / "day-04",
@@ -35,7 +35,7 @@ from airflow.operators.python import PythonOperator
 from airflow_callbacks import on_failure
 
 CUSTOMER_DATASET  = Dataset("postgresql://dvdrental/analytics_customer_airflow")
-ML_MODEL_DATASET  = Dataset("file:///mnt/c/90_day_python_de_plan/sprint-06/day-39/models/latest")
+ML_MODEL_DATASET  = Dataset("file:///mnt/d/alsgit/90_day_python_de_plan/sprint-06/day-39/models/latest")
 
 PIPELINE_DIR = PROJECT_ROOT / "sprint-06" / "day-39" / "models"
 PIPELINE_DIR.mkdir(parents=True, exist_ok=True)

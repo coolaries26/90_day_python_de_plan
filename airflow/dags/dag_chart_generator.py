@@ -25,7 +25,7 @@ _ip = subprocess.run(
 ).stdout.strip()
 os.environ["DB_HOST"] = _ip or "172.18.144.1"
 
-PROJECT_ROOT = Path("/mnt/c/90_day_python_de_plan")
+PROJECT_ROOT = Path("/mnt/d/alsgit/90_day_python_de_plan")
 
 # Add all required paths
 for p in [
@@ -42,7 +42,7 @@ for p in [
 # ── Datasets ──────────────────────────────────────────────────────────────
 CUSTOMER_DATASET = Dataset("postgresql://dvdrental/analytics_customer_airflow")
 FILM_DATASET     = Dataset("postgresql://dvdrental/analytics_film_airflow")
-CHART_DATASET    = Dataset("file:///mnt/c/90_day_python_de_plan/airflow/output/charts")
+CHART_DATASET    = Dataset("file:///mnt/d/alsgit/90_day_python_de_plan/airflow/output/charts")
 
 # Output directory for Airflow-managed charts
 CHART_OUTPUT = PROJECT_ROOT / "airflow" / "output" / "charts"

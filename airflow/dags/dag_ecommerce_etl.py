@@ -29,9 +29,11 @@ os.environ["ECOMMERCE_DB_NAME"]     = "ecommerce_db"
 os.environ["ECOMMERCE_DB_USER"]     = "appuser"
 os.environ["ECOMMERCE_DB_PASSWORD"] = "AppUser@2024!"
 
-PROJECT_ROOT = Path("/mnt/c/90_day_python_de_plan")
+PROJECT_ROOT = Path("/mnt/d/alsgit/90_day_python_de_plan")
 for p in [
-    PROJECT_ROOT / "sprint-01" / "day-04",  # db_utils
+#    PROJECT_ROOT / "sprint-01" / "day-02",  # db_utils
+    PROJECT_ROOT / "sprint-01" / "day-04",  # logging_utils
+    PROJECT_ROOT / "sprint-02" / "day-14",  # analytics
     PROJECT_ROOT / "sprint-01" / "day-05",  # models
     PROJECT_ROOT / "capstone",  # shared utils
     PROJECT_ROOT / "capstone" / "etl", # raw → staging → analytics
@@ -41,7 +43,7 @@ for p in [
     sys.path.insert(0, str(p))
 
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.operators.python import PythonOperator #type: ignore
 from airflow_callbacks import on_failure
 
 default_args = {
@@ -59,7 +61,7 @@ def run_analytics_etl(**context) -> dict:
     """
     from analytics_etl import main as etl_main, run_etl, get_ecommerce_engine, dispose_ecommerce_engine, \
         CUSTOMER_LTV_SQL, ORDER_METRICS_SQL, SELLER_PERFORMANCE_SQL, \
-        PRODUCT_ANALYTICS_SQL, MONTHLY_REVENUE_SQL
+        PRODUCT_ANALYTICS_SQL, MONTHLY_REVENUE_SQL  #type: ignore
 
     engine = get_ecommerce_engine()
     results = {}
@@ -87,7 +89,7 @@ def run_analytics_etl(**context) -> dict:
 # ── Task 2: Train churn model — provided ──────────────────────────────────
 def run_churn_model(**context) -> dict:
     """Train churn pipeline and write predictions to ml.churn_predictions."""
-    from churn_model import load_features, train_churn_pipeline, save_pipeline, write_churn_predictions
+    from churn_model import load_features, train_churn_pipeline, save_pipeline, write_churn_predictions #type: ignore
 
     X, y = load_features()
     pipeline = train_churn_pipeline(X, y)
@@ -125,7 +127,7 @@ def run_delay_model(**context) -> dict:
     return result
     """
     # YOUR CODE HERE
-    from delay_model import load_features, train_model, save_pipeline, write_delay_predictions
+    from delay_model import load_features, train_model, save_pipeline, write_delay_predictions  #type: ignore
     x, y = load_features()
     pipeline = train_model(x, y)
     save_pipeline(pipeline, x, "delay_pipeline")
@@ -181,8 +183,8 @@ def log_pipeline_run(**context) -> None:
     total_rows = sum(etl.values())
 
     from sqlalchemy.orm import Session
-    from db_utils import get_engine, dispose_engine
-    from models_compat import AuditLog
+    from db_utils import get_engine, dispose_engine #type: ignore
+    from models_compat import AuditLog  #type: ignore
 
     engine = get_engine()
     audit = AuditLog(

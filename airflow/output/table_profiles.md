@@ -1,3 +1,5 @@
+# Generated at: 2026-07-01 20:12:01.232207
+
 # Table Profiles
 
 | Table | Rows | Min Required | Status |

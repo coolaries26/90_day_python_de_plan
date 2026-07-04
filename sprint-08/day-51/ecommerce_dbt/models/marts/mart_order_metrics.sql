@@ -14,7 +14,7 @@ WITH order_data AS (
         o.delivered_at,
         o.estimated_delivery_at,
         o.delivery_days,
-        o.is_late,
+        COALESCE(o.is_late, false) AS is_late,  --o.is_late,
         p.total_payment,
         p.payment_types,
         r.review_score,

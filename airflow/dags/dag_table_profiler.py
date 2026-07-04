@@ -18,13 +18,13 @@ _ip = subprocess.run(
 ).stdout.strip()
 os.environ["DB_HOST"] = _ip or "172.18.144.1"
 
-PROJECT_ROOT = Path("/mnt/c/90_day_python_de_plan")
+PROJECT_ROOT = Path("/mnt/d/alsgit/90_day_python_de_plan")
 sys.path.insert(0, str(PROJECT_ROOT / "sprint-01" / "day-02"))
 sys.path.insert(0, str(PROJECT_ROOT / "sprint-01" / "day-04"))
 sys.path.insert(0, str(Path(__file__).parent))
 
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.operators.python import PythonOperator #type: ignore
 from airflow_callbacks import on_failure
 
 # ── Table config — add/remove tables here to change task count ───────────
@@ -54,8 +54,8 @@ def profile_table(
       - Min/max of key column
     Pushes profile dict to XCom.
     """
-    import pandas as pd
-    from db_utils import get_engine, execute_scalar, dispose_engine, close_pool
+    import pandas as pd 
+    from db_utils import get_engine, execute_scalar, dispose_engine, close_pool #type: ignore
 
     engine = get_engine()
 
@@ -131,7 +131,7 @@ def summarise_profiles(**context) -> None:
         failed = len(profiles) - passed
 
     Step 3: Write markdown table to:
-        /mnt/c/90_day_python_de_plan/airflow/output/table_profiles.md
+        /mnt/d/alsgit/90_day_python_de_plan/airflow/output/table_profiles.md
 
         Columns: Table | Rows | Min Required | Status
         One row per table from profiles list
@@ -159,7 +159,8 @@ def summarise_profiles(**context) -> None:
             passed = sum(1 for p in profiles if p["passed"])
             failed = len(profiles) - passed
             # Write markdown table
-            with open("/mnt/c/90_day_python_de_plan/airflow/output/table_profiles.md", "w") as f:
+            with open("/mnt/d/alsgit/90_day_python_de_plan/airflow/output/table_profiles.md", "w") as f:
+                f.write(f"# Generated at: {datetime.now()}\n\n")
                 f.write("# Table Profiles\n\n")
                 f.write("| Table | Rows | Min Required | Status |\n")
                 f.write("|-------|------|--------------|--------|\n")

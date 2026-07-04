@@ -32,7 +32,7 @@ _ip = subprocess.run(
 ).stdout.strip()
 os.environ["DB_HOST"] = _ip or "172.18.144.1"
 
-PROJECT_ROOT = Path("/mnt/c/90_day_python_de_plan")
+PROJECT_ROOT = Path("/mnt/d/alsgit/90_day_python_de_plan")
 sys.path.insert(0, str(PROJECT_ROOT / "sprint-01" / "day-02"))
 sys.path.insert(0, str(PROJECT_ROOT / "sprint-01" / "day-04"))
 

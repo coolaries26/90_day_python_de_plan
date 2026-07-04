@@ -35,7 +35,7 @@ try:
     from dotenv import load_dotenv
     _here = Path(__file__).resolve().parent
     for _candidate in [_here, _here.parent, _here.parent.parent,
-                       Path.home() / "python-de-journey"]:
+                       Path.home() / "90_day_python_de_plan"]:
         _env = _candidate / ".env"
         if _env.is_file():
             load_dotenv(dotenv_path=_env, override=False)
@@ -50,7 +50,7 @@ except ImportError:
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "day-04"))
-from logger import get_logger
+from logger import get_logger   #type: ignore
 log = get_logger(__name__)
 
 
@@ -226,9 +226,11 @@ def execute_scalar(sql: str, params: tuple | dict | None = None) -> Any:
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(sql, params)
-            result = cur.fetchone()
-    return result[0] if result else None
-
+            print(f"execute_scalar | sql={sql.strip()} | rowcount={cur.rowcount}")
+            if slice(sql.strip().upper(), 0, 6) == "SELECT":
+                result = cur.fetchone()
+                return result[0] if result else None
+    
 
 def execute_dml(sql: str, params: tuple | dict | None = None) -> int:
     """

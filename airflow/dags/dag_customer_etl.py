@@ -47,7 +47,7 @@ def _get_windows_ip() -> str:
 WINDOWS_IP = _get_windows_ip()
 os.environ["DB_HOST"] = WINDOWS_IP
 
-PROJECT_ROOT = Path("/mnt/c/90_day_python_de_plan")
+PROJECT_ROOT = Path("/mnt/d/alsgit/90_day_python_de_plan")
 OUTPUT_DIR   = PROJECT_ROOT / "airflow" / "output"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 

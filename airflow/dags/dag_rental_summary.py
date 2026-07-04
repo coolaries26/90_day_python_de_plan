@@ -19,7 +19,7 @@ Task 2: validate_rental_stats(stats: dict)
 
 Task 3: write_rental_report(stats: dict, validation: str)
   - Receives stats + validation result
-  - Write to /mnt/c/90_day_python_de_plan/airflow/output/rental_report.md
+  - Write to /mnt/d/alsgit/90_day_python_de_plan/airflow/output/rental_report.md
   - Content: timestamp, all 4 stats, validation status
   - Return output file path
 Pass criteria:
@@ -39,7 +39,7 @@ import os
 from pathlib import Path
 import sys
 from airflow import Dataset
-from airflow.decorators import dag, task
+from airflow.decorators import dag, task    #type: ignore
 from airflow_callbacks import on_failure, on_retry
 
 
@@ -60,7 +60,7 @@ WINDOWS_IP = _get_windows_ip()
 os.environ["DB_HOST"] = WINDOWS_IP
 # from .bashrc export
 
-PROJECT_ROOT = Path("/mnt/c/90_day_python_de_plan")
+PROJECT_ROOT = Path("/mnt/d/alsgit/90_day_python_de_plan")
 OUTPUT_DIR   = PROJECT_ROOT / "airflow" / "output"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -84,7 +84,7 @@ RENTAL_DATASET = Dataset(
 @task
 def extract_rental_stats() -> dict:
     import pandas as pd
-    from db_utils import get_engine, dispose_engine
+    from db_utils import get_engine, dispose_engine #type: ignore
 
     engine = get_engine()
     df = pd.read_sql("SELECT * FROM rental", engine)
@@ -115,7 +115,7 @@ def validate_rental_stats(stats: dict) -> str:
 
 @task
 def write_rental_report(stats: dict, validation: str) -> str:
-    output_path = "/mnt/c/90_day_python_de_plan/airflow/output/rental_report.md"
+    output_path = "/mnt/d/alsgit/90_day_python_de_plan/airflow/output/rental_report.md"
     with open(output_path, "w") as f:
         f.write(f"# Rental Summary Report\n")
         f.write(f"Generated at: {datetime.now()}\n\n")
@@ -126,27 +126,24 @@ def write_rental_report(stats: dict, validation: str) -> str:
         f.write(f"Validation Status: {validation}\n")
     return output_path
 
-#@task
-#def write_rental_audit(stats: dict, validation: str) -> None:
-#    
-#    if validation == "validation_passed": 
-#        status = "Success"  # or "failed" based on actual logic
-#        rows_loaded = stats["total_rentals"]
-#    else:
-#        status = "Failed"
-#        rows_loaded = 0
-#
-#    from db_utils import execute_query, close_pool
-#    sql = (f"""INSERT INTO etl_audit_log ( pipeline_name, source_table, target_table, status, rows_loaded, run_at
-#            ) 
-#           VALUES ('rental_summary_daily', 'rental', 'rental_summary', '{status}', {rows_loaded}, NOW()
-#           )
-#        """)
-#    sql = sql.replace("\n", " ")
-#    execute_query(sql)
-#
-#    close_pool()
-#
+@task
+def write_rental_audit(stats: dict, validation: str) -> None:
+    
+    if validation == "validation_passed": 
+        status = "Success"  # or "failed" based on actual logic
+        rows_loaded = stats["total_rentals"]
+        from db_utils import execute_scalar, close_pool  #type: ignore
+        sql = (f"""INSERT INTO etl_audit_log ( pipeline_name, source_table, target_table, status, rows_loaded, run_at) VALUES ('rental_summary_daily', 'rental', 'rental_summary', '{status}', {rows_loaded}, NOW()) RETURNING id
+            """)
+    #    sql = sql.replace("\n", " ")
+        execute_scalar(sql)
+
+        close_pool()
+    else:
+        status = "Failed"
+        rows_loaded = 0
+
+
 #──── DAG ───────────────────────────────────────────────────────────────────
 
 @dag(
@@ -164,15 +161,16 @@ def write_rental_report(stats: dict, validation: str) -> str:
     start_date=datetime(2026, 5, 1),
     schedule="@daily",
     catchup=False,
-    max_active_runs=1
+    max_active_runs=1,
+    tags=["audit", "report", "sprint-04"],
 ) 
 def rental_pipeline():
     stats = extract_rental_stats()
     validation = validate_rental_stats(stats)
     report = write_rental_report(stats, validation)
-    # audit = write_rental_audit(stats, validation)  # runs after report is written
+    audit = write_rental_audit(stats, validation)  # runs after report is written
     
     #Dependency: stats → validation → report
-    stats >> validation >> report 
+    stats >> validation >> report >> audit
 
 rental_pipeline()  

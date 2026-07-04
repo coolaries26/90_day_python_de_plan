@@ -23,7 +23,7 @@ _ip = subprocess.run(
 os.environ["DB_HOST"] = _ip or "172.18.144.1"
 
 PROJECT_ROOT = Path(os.environ.get(
-    "project_root", "/mnt/c/90_day_python_de_plan"
+    "project_root", "/mnt/d/alsgit/90_day_python_de_plan"
 ))
 for p in [
     PROJECT_ROOT / "sprint-01" / "day-02", # db_utils
@@ -32,8 +32,8 @@ for p in [
     sys.path.insert(0, str(p))
 
 from airflow import DAG
-from airflow.models import Variable
-from airflow.operators.python import PythonOperator
+from airflow.models import Variable #type: ignore
+from airflow.operators.python import PythonOperator #type: ignore
 
 default_args = {
     "owner": "python-de-journey",
@@ -51,7 +51,7 @@ def read_audit_log(**context) -> None:
     Push summary dict to XCom for downstream tasks.
     """
     import pandas as pd
-    from db_utils import get_engine, dispose_engine
+    from db_utils import get_engine, dispose_engine #type: ignore
 
     engine = get_engine()
     sql = """
@@ -91,7 +91,7 @@ def check_pipeline_counts(**context) -> None:
     Verify each target table has expected row count.
     Push pass/fail per pipeline to XCom.
     """
-    from db_utils import execute_scalar, close_pool
+    from db_utils import execute_scalar, close_pool #type: ignore
 
     # Read structured config from Variable
     config_json = Variable.get("etl_pipeline_config", default_var="{}")
@@ -140,7 +140,7 @@ def write_audit_report(**context) -> None:
     Step 3: Get output dir from Variable
         output_dir = Path(Variable.get(
             "project_root",
-            default_var="/mnt/c/90_day_python_de_plan"
+            default_var="/mnt/d/alsgit/90_day_python_de_plan"
         )) / "airflow" / "output"
         output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -166,7 +166,7 @@ def write_audit_report(**context) -> None:
     # YOUR CODE HERE
     import pandas as pd
     from pathlib import Path
-    from airflow.models import Variable
+    from airflow.models import Variable #type: ignore
 
     # Pull XCom from upstream tasks
     summary = context["ti"].xcom_pull(
@@ -177,8 +177,8 @@ def write_audit_report(**context) -> None:
     )
     # Get output dir from Variable
     output_dir = Path(Variable.get(
-        "project_root",
-        default_var="/mnt/c/90_day_python_de_plan"
+        "PROJECT_ROOT",
+        default_var="/mnt/d/alsgit/90_day_python_de_plan"
     )) / "airflow" / "output"
     output_dir.mkdir(parents=True, exist_ok=True)
 

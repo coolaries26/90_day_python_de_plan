@@ -1,15 +1,15 @@
 # Audit Report
 
-**Report generated at:** 2026-05-28 17:53:58.649464
+**Report generated at:** 2026-07-04 18:27:09.449961
 
 ## Summary
 - Total Runs: 20
-- Successful: 17
-- Failed: 3
-- Total Rows Loaded: 6050
-- Pipelines: dag_chart_generator, dag_ml_retrain, dag_ml_retrain.evaluate_and_detect_drift, dag_ml_retrain.train_pipeline
-- Latest Run: 2026-05-28 23:23:26.404122
+- Successful: 6
+- Failed: 13
+- Total Rows Loaded: 408631
+- Pipelines: rental_summary_daily, dag_ml_retrain, dag_dbt_pipeline, dag_dbt_pipeline.dbt_test, dag_ecommerce_etl, dag_dbt_pipeline.dbt_run, dvdrental_table_profiler.summarise_profiles, dvdrental_table_profiler.profile_store, dvdrental_table_profiler.profile_category, dvdrental_table_profiler.profile_actor, dvdrental_table_profiler.profile_inventory, dvdrental_table_profiler.profile_payment, dvdrental_table_profiler.profile_rental, dvdrental_table_profiler.profile_customer, dvdrental_table_profiler.profile_film
+- Latest Run: 2026-07-04 23:56:58.008943
 
 ## Pipeline Count Checks
-- **customer**: 599 rows (min 500) ✅ PASS
-- **film**: 1000 rows (min 900) ✅ PASS
+- **customer**: ERROR — '>=' not supported between instances of 'NoneType' and 'int'
+- **film**: ERROR — '>=' not supported between instances of 'NoneType' and 'int'

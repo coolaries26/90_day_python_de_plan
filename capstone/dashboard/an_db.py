@@ -17,14 +17,19 @@ def _engine():
 
 @st.cache_data(ttl=300)
 def load_customer_ltv() -> pd.DataFrame:
-    return pd.read_sql("SELECT * FROM analytics.customer_ltv", _engine())
+#    return pd.read_sql("SELECT * FROM analytics.customer_ltv", _engine())
+    return pd.read_sql("SELECT * FROM dbt_dev_marts.mart_customer_ltv", _engine())
 
 
 @st.cache_data(ttl=300)
 def load_order_metrics() -> pd.DataFrame:
+#    return pd.read_sql("""
+#        SELECT * FROM analytics.order_metrics
+#        WHERE delivery_days_actual IS NOT NULL
+#    """, _engine())
     return pd.read_sql("""
-        SELECT * FROM analytics.order_metrics
-        WHERE delivery_days_actual IS NOT NULL
+        SELECT * FROM dbt_dev_marts.mart_order_metrics
+        WHERE delivery_days IS NOT NULL
     """, _engine())
 
 

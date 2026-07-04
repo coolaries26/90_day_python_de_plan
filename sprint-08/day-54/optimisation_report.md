@@ -17,9 +17,19 @@
 
 ## Key Findings
 
-1. [Your finding about when indexes help most]
-2. [Your finding about composite index column order]
-3. [Your finding about partitioning on small datasets]
+## Key Finding: Index Overhead on Small Tables
+
+1. idx_seller_state_revenue made the query SLOWER (1.12ms → 2.36ms).
+With only 3,095 rows, PostgreSQL's planner correctly chose Index Scan
+(confirmed in EXPLAIN output), but the index lookup + page fetch
+overhead exceeded the benefit on such a small table.
+
+2. Lesson: indexes help most on tables with 10k+ rows where filtering
+eliminates >90% of rows. On small lookup tables, sequential scans
+are often faster — don't index reflexively, measure first.
+
+3. Partitioning: Quarter Filter Speedup Smaller (1.1x)
+Makes sense — a quarter filter spans 3 partitions, so PostgreSQL still scans 3 partition tables instead of 1. Partition pruning helps most when your filter aligns with exactly one partition boundary (the month query benefited more — 2.1x).
 
 ## Recommendations
 

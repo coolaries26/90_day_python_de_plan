@@ -20,8 +20,8 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from airflow import DAG
-from airflow.operators.python import PythonOperator
-from airflow.utils.task_group import TaskGroup
+from airflow.operators.python import PythonOperator #type: ignore
+from airflow.utils.task_group import TaskGroup  #type: ignore
 from airflow import Dataset
 
 FILM_DATASET = Dataset(
@@ -45,7 +45,7 @@ WINDOWS_IP = _get_windows_ip()
 os.environ["DB_HOST"] = WINDOWS_IP
 # from .bashrc export
 
-PROJECT_ROOT = Path("/mnt/c/90_day_python_de_plan")
+PROJECT_ROOT = Path("/mnt/d/alsgit/90_day_python_de_plan")
 OUTPUT_DIR   = PROJECT_ROOT / "airflow" / "output"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -80,8 +80,8 @@ def run_film_etl(**context) -> int:
       - Push rows_loaded to XCom key "film_rows"
       - Return rows_loaded
     """
-    from etl_protocols import ETLConfig, ETLResult, ETLProtocol 
-    from film_etl_pipeline import FilmETLPipeline
+    from etl_protocols import ETLConfig, ETLResult, ETLProtocol #type: ignore
+    from film_etl_pipeline import FilmETLPipeline   #type: ignore
     
     config = ETLConfig(
         source_table="film",
@@ -106,7 +106,7 @@ def check_row_count(**context) -> None:
       - Assert rows == 1000
       - Print confirmation
     """
-    from db_utils import execute_scalar, close_pool
+    from db_utils import execute_scalar, close_pool #type: ignore
 
     count = execute_scalar("SELECT COUNT(*) FROM analytics_film_airflow")
     close_pool()
@@ -126,7 +126,7 @@ def check_value_tiers(**context) -> None:
       - Assert set(tiers) == {"Budget", "Standard", "Premium"}
       - close_pool() in finally block
     """
-    from db_utils import execute_query, close_pool
+    from db_utils import execute_query, close_pool  #type: ignore
 
     try:
         rows = execute_query(

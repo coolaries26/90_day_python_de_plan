@@ -16,6 +16,7 @@ Usage in DAG:
 from __future__ import annotations
 import os
 import sys
+import sqlalchemy
 from pathlib import Path
 from datetime import datetime
 
@@ -28,7 +29,7 @@ _ip = subprocess.run(
 ).stdout.strip()
 os.environ.setdefault("DB_HOST", _ip or "172.18.144.1")
 
-PROJECT_ROOT = Path("/mnt/c/90_day_python_de_plan")
+PROJECT_ROOT = Path("/mnt/d/alsgit/90_day_python_de_plan")
 sys.path.insert(0, str(PROJECT_ROOT / "sprint-01" / "day-02"))
 sys.path.insert(0, str(PROJECT_ROOT / "sprint-01" / "day-04"))
 sys.path.insert(0, str(PROJECT_ROOT / "sprint-03" / "day-16"))
@@ -46,11 +47,11 @@ def _write_audit_record(
     """Write a record to etl_audit_log. Used by all callbacks."""
     try:
         from sqlalchemy.orm import Session
-        from db_utils import get_engine, dispose_engine
+        from db_utils import get_engine, dispose_engine #type: ignore
         try:
-            from models_compat import AuditLog   # SQLAlchemy 1.4 (airflow-venv)
+            from models_compat import AuditLog   # SQLAlchemy 1.4 (airflow-venv) #type: ignore
         except ImportError:
-            from models import AuditLog          # SQLAlchemy 2.0 (windows venv)
+            from models import AuditLog          # SQLAlchemy 2.0 (windows venv) #type: ignore
 
         # Build AuditLog manually (no ETLResult available in callbacks)
         audit = AuditLog(

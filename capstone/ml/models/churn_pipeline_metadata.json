@@ -1,6 +1,6 @@
 {
   "model_name": "churn_pipeline",
-  "trained_at": "2026-07-04T18:29:30.984659",
+  "trained_at": "2026-07-04T20:18:26.865533",
   "features": [
     "total_spent",
     "avg_order_value",

@@ -170,7 +170,7 @@ Speedup calculated (any value — measuring is what matters)
 airflow dags trigger dag_ecommerce_etl
 sleep 120
 airflow dags list-runs -d dag_dbt_pipeline --output table | tail -3
-
+airflow dags list-runs -d dag_ecommerce_etl --output table | tail -3
 # Verify new mart table exists
 python -c "
 import sys; sys.path.insert(0, 'capstone')

@@ -83,3 +83,4 @@
 | 055 | S08 | 2026-07-05 00:05 | `9fd68c8e` | `sprint-08/day-55-integration` | Integration: Airflow runs dbt run/test/snapshot, Streamlit reads dbt marts |
 | 056 | S08 | 2026-07-05 02:28 | `cfaa1594` | `sprint-08/day-56-sprint-test` | Sprint 08 test: state revenue window, mart_seller_summary, index test, full pipeline |
 | 056 | S08 | 2026-07-05 02:29 | `81d17e3c` | `sprint-08/day-56-sprint-test` | Sprint 08 complete |
+| 057 | S09 | 2026-07-10 01:47 | `305e791e` | `sprint-09/day-57-great-expectations-setup` | Great Expectations: GX setup, ecommerce_db datasource, 10 expectations on mart_customer_ltv, Data Docs |

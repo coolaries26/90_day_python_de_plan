@@ -375,7 +375,8 @@ def build_suite() -> None:
     #     mostly=0.95,   # at least 95% are non-Platinum
     # )
     # YOUR CODE HERE
-
+    validator
+    
     # Save the expectation suite
     validator.save_expectation_suite(discard_failed_expectations=False)
     logger.info("Expectation suite saved: mart_customer_ltv.basic")

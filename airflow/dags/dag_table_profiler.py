@@ -16,13 +16,15 @@ _ip = subprocess.run(
     ["bash", "-c", "ip route | grep default | awk '{print $3}'"],
     capture_output=True, text=True,
 ).stdout.strip()
-os.environ["DB_HOST"] = _ip or "172.18.144.1"
+os.environ["DB_HOST"] = _ip or "172.28.224.1"
 
 PROJECT_ROOT = Path("/mnt/d/alsgit/90_day_python_de_plan")
 sys.path.insert(0, str(PROJECT_ROOT / "sprint-01" / "day-02"))
 sys.path.insert(0, str(PROJECT_ROOT / "sprint-01" / "day-04"))
 sys.path.insert(0, str(Path(__file__).parent))
 
+import pandas as pd 
+from db_utils import get_engine, execute_scalar, dispose_engine, close_pool #type: ignore
 from airflow import DAG
 from airflow.operators.python import PythonOperator #type: ignore
 from airflow_callbacks import on_failure
@@ -54,14 +56,12 @@ def profile_table(
       - Min/max of key column
     Pushes profile dict to XCom.
     """
-    import pandas as pd 
-    from db_utils import get_engine, execute_scalar, dispose_engine, close_pool #type: ignore
 
     engine = get_engine()
 
     # Row count
     count = execute_scalar(f"SELECT COUNT(*) FROM {table}")
-
+    print(f"Count: {count})")
     # Null counts
     null_sql = f"""
         SELECT column_name,
@@ -201,7 +201,7 @@ with DAG(
                 "key_col":  cfg["key_col"],
             },
             pool="db_connection_pool",  # ← max 3 run simultaneously
-            pool_slots=2,
+            pool_slots=5,
         )
         profile_tasks.append(task)
 

@@ -6,6 +6,8 @@ Triggered by dataset event from dag_ecommerce_etl.
 """
 from __future__ import annotations
 import os
+GX_DIR = "/mnt/d/alsgit/90_day_python_de_plan/sprint-09/day-57/gx_project/great_expectations"
+
 import subprocess
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -39,6 +41,54 @@ default_args = {
     "on_failure_callback": on_failure,
 }
 
+def run_gx_checkpoint(**context) -> None:
+    """
+    Run GX checkpoint — validates all 3 expectation suites.
+    Raises ValueError if any expectation fails.
+    Airflow catches the exception → task marked FAILED
+    → on_failure_callback fires → audit log entry written.
+    """
+    import great_expectations as gx
+
+    # Set Windows IP for WSL2 → PostgreSQL connection
+    import subprocess
+    ip = subprocess.run(
+        ["bash", "-c", "ip route | grep default | awk '{print $3}'"],
+        capture_output=True, text=True,
+    ).stdout.strip()
+
+    # Patch the datasource connection string if needed
+    # (GX reads from great_expectations.yml — update host if 127.0.0.1)
+    gx_context = gx.data_context.DataContext(context_root_dir=GX_DIR)
+
+    print("Running GX checkpoint: ecommerce_data_quality")
+    result = gx_context.run_checkpoint(
+        checkpoint_name="ecommerce_data_quality"
+    )
+
+    # Log per-suite results to task logs
+    for key, val in result.run_results.items():
+        vr    = val["validation_result"]
+        suite = vr.meta["expectation_suite_name"]
+        stats = vr.statistics
+        status = "✅" if vr.success else "❌"
+        print(
+            f"  {status} {suite}: "
+            f"{stats['successful_expectations']}/{stats['evaluated_expectations']} "
+            f"({stats['success_percent']:.0f}%)"
+        )
+
+    # Push summary to XCom
+    context["ti"].xcom_push(key="gx_success", value=result.success)
+    context["ti"].xcom_push(key="gx_suites_run", value=3)
+
+    if not result.success:
+        raise ValueError(
+            "GX checkpoint FAILED — data quality issues detected. "
+            "Check Data Docs for details."
+        )
+
+    print(f"GX checkpoint passed: 29/29 expectations")
 
 def log_dbt_run(**context) -> None:
     """Log the dbt run results to etl_audit_log."""
@@ -125,7 +175,22 @@ with DAG(
         outlets=[DBT_MART_DATASET],   # signals marts are fresh
         trigger_rule="all_done",
     )
+    # ── Task 5: run GX checkpoint — WRITE THIS YOURSELF ──────────────────
+    # task_gx = PythonOperator(
+    #     task_id="run_gx_checkpoint",
+    #     python_callable=run_gx_checkpoint,
+    #     trigger_rule="all_success",   # only run if dbt_test passed
+    # )
+
+    # Update dependency chain:
+    # task_dbt_run >> task_dbt_test >> task_dbt_snapshot >> task_gx >> task_log
+    task_gx = PythonOperator(
+        task_id="run_gx_checkpoint",
+        python_callable=run_gx_checkpoint,
+        trigger_rule="all_success",   # only run if dbt_test passed
+    )
+
     # ── Dependencies ───────────────────────────────────────────────────────
     # YOUR TASK: chain all 4 tasks
     # task_dbt_run >> task_dbt_test >> task_dbt_snapshot >> task_log
-    task_dbt_run >> task_dbt_test >> task_dbt_snapshot >> task_log
+    task_dbt_run >> task_dbt_test >> task_dbt_snapshot >> task_gx >> task_log

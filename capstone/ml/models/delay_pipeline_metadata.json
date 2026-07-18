@@ -1,6 +1,6 @@
 {
   "model_name": "delay_pipeline",
-  "trained_at": "2026-07-11T10:19:04.888188",
+  "trained_at": "2026-07-18T21:26:14.390584",
   "n_features": 5,
   "features": [
     "delivery_days_estimated",

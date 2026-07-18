@@ -37,7 +37,8 @@ def add_datasource(context: gx.DataContext) -> None:
             "class_name": "SqlAlchemyExecutionEngine",
             "connection_string": (
                 "postgresql+psycopg2://appuser:AppUser%402024%21"
-                "@127.0.0.1:5432/ecommerce_db"
+#                "@127.0.0.1:5432/ecommerce_db"
+                 "@172.28.224.1:5432/ecommerce_db"
             ),
         },
         "data_connectors": {
